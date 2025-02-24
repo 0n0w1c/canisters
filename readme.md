@@ -1,6 +1,6 @@
 #### Adds reuseable (or disposable) fuel canisters
 
-Startup option to enable reuseable canisters (default: reuseable)
+Startup option to enable reuseable canisters (default: enabled)
 (Disable for disposable canisters)
 
 Cargo pods deliver 50 reusable canisters to space platform hubs
@@ -12,7 +12,7 @@ Startup option to spill or void canisters on space platform hub overflows
 
 Canister recipe:
 1 titanium plate (or 1 tin plate or 1 steel plate)
-Additionally, if a mod supplies glass plates, the recipe will include 1 glass plate
+Additionally, if a mod supplies glass, the recipe will include 1 glass plate
 
 #### Supported mods:
 [Tin](https://mods.factorio.com/mod/bztin)  
