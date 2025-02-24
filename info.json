@@ -7,8 +7,9 @@
     "homepage": "",
     "description": "Adds reuseable (or disposable) fuel canisters",
     "dependencies": [
-        "bztin",
-        "bztitanium",
-        "Glass"
+        "? bztin",
+        "? bztitanium",
+        "? Glass",
+        "? PlutoniumEnergy"
     ]
 }

@@ -24,6 +24,6 @@ if recipe then
     if reuseable then
         data.raw["item"]["rocket-fuel"].burnt_result = "canister"
         data.raw["item"]["nuclear-fuel"].burnt_result = "canister"
-        data.raw["item"]["plutonium-fuel"].burnt_result = "canister"
+        if mods["PlutoniumEnergy"] then data.raw["item"]["plutonium-fuel"].burnt_result = "canister" end
     end
 end
