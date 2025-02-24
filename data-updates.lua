@@ -21,10 +21,10 @@ if recipe then
 
     if mods["quality"] then recycling.generate_recycling_recipe(recipe) end
 
-    recipe = data.raw["recipe"]["rocket-fuel"]
-    if recipe then
-        table.insert(recipe.ingredients, { type = "item", name = "canister", amount = 1 })
-        if mods["quality"] then recycling.generate_recycling_recipe(recipe) end
+    local rocket_fuel_recipe = data.raw["recipe"]["rocket-fuel"]
+    if rocket_fuel_recipe then
+        table.insert(rocket_fuel_recipe.ingredients, { type = "item", name = "canister", amount = 1 })
+        if mods["quality"] then recycling.generate_recycling_recipe(rocket_fuel_recipe) end
     end
 
     table.insert(data.raw["technology"]["rocket-fuel"].effects, { type = "unlock-recipe", recipe = "canister" })
