@@ -11,11 +11,12 @@ Startup option to spill or void canisters on space platform hub overflows
 (Applies only if canisters are reuseable)
 
 Canister recipe:
-1 titanium plate (or 1 tin plate or 1 steel plate)
+1 steel plate (or 1 tin plate or 1 titanium plate)
 Additionally, if a mod supplies glass, the recipe will include 1 glass plate
 
 #### Supported mods:
 [Tin](https://mods.factorio.com/mod/bztin)  
 [Titanium](https://mods.factorio.com/mod/bztitanium)  
 [Glass](https://mods.factorio.com/mod/Glass)  
+[AAI Industry](https://mods.factorio.com/mod/aai-industry)  
 [Plutonium Energy](https://mods.factorio.com/mod/PlutoniumEnergy)  
