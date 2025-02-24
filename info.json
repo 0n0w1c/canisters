@@ -5,7 +5,7 @@
     "author": "0n0w1c",
     "factorio_version": "2.0",
     "homepage": "",
-    "description": "Adds disposable or reuseable rocket fuel canisters",
+    "description": "Adds reuseable (or disposable) fuel canisters",
     "dependencies": [
         "? bztin",
         "? bztitanium",
