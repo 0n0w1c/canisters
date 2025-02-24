@@ -4,6 +4,7 @@ Startup option to enable reuseable canisters (default: reuseable)
 (Disable for disposable canisters)
 
 Cargo pods deliver 50 reusable canisters to space platform hubs
+(These are not accounted for with in-game platform hub inventory checks)
 Burnt rocket and nuclear/plutonium fuel returns canisters
 
 Startup option to spill or void canisters on space platform hub overflows
