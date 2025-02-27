@@ -1,5 +1,6 @@
 local reuseable = settings.startup["canisters-reuseable-canisters"].value
 local spill = settings.startup["canisters-spill-canisters"].value
+local metal = settings.startup["canisters-canister-metal"].value
 
 local function handle_cargo_pod_delivery(event)
     if not reuseable then return end
@@ -9,7 +10,13 @@ local function handle_cargo_pod_delivery(event)
 
     if platform_hub and platform_hub.valid then
         local inventory = platform_hub.get_inventory(defines.inventory.chest)
+
         local count = 50
+        if metal == "tin" then
+            local rng = game.create_random_generator()
+            count = rng(count - 5, count)
+        end
+
         local inserted = inventory and inventory.valid and inventory.insert({ name = "canister", count = count }) or 0
 
         count = count - inserted
