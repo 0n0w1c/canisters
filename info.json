@@ -1,11 +1,11 @@
 {
     "name": "canisters",
     "version": "0.0.1",
-    "title": "Rocket Fuel Canisters",
+    "title": "Canisters",
     "author": "0n0w1c",
     "factorio_version": "2.0",
     "homepage": "",
-    "description": "Adds reuseable (or disposable) rocket fuel canisters",
+    "description": "Adds reuseable (or disposable) canisters",
     "dependencies": [
         "base >= 2.0.35",
         "? bztin",
