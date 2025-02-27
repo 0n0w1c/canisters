@@ -1,4 +1,5 @@
-### Containers adds reuseable (or disposable) rocket fuel canisters  
+## Canisters
+Adds reuseable (or disposable) rocket fuel canisters  
 
 Adds a canister as an additional ingredient for rocket fuel and subsequently for the nuclear and plutonium fuels.
 When a canister fuel is used, the empty canister is returned.  
