@@ -13,7 +13,6 @@ Startup option to enable reuseable canisters. (default: enabled)
 Disable the option for disposable canisters, which are not returned.  
 
 Startup option to either spill or void canisters on space platform hub inventory overflows.  
-(Only applies when reuseable canisters are enabled)  
 
 Startup option to select the metal for the recipe, if Tin and/or Titanium is active.
 
