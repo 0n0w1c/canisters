@@ -12,7 +12,7 @@ local function handle_cargo_pod_delivery(event)
         local inventory = platform_hub.get_inventory(defines.inventory.chest)
 
         local count = 50
-        if metal == "tin" then
+        if metal == "Tin" then
             local rng = game.create_random_generator()
             count = rng(count - 5, count)
         end
