@@ -1,7 +1,7 @@
 ## Canisters
 Adds reuseable (or disposable) rocket fuel canisters  
 
-A canister is an additional ingredient for rocket fuel.
+A canister is an additional ingredient for rocket fuel.  
 When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
 This is true for planes, trains and automobiles.  
 
