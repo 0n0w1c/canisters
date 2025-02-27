@@ -10,7 +10,6 @@
         "base >= 2.0.35",
         "? bztin",
         "? bztitanium",
-        "? aai-industry",
         "? Glass",
         "? PlutoniumEnergy"
     ]
