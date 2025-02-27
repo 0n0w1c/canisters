@@ -6,15 +6,13 @@ if mods["quality"] then recycling = require("__quality__/prototypes/recycling") 
 
 local recipe = data.raw["recipe"]["canister"]
 if recipe then
-    if metal == "tin" then
-        --if data.raw["item"]["tin-plate"] then -- bztin
+    if metal == "Tin" then
         recipe.ingredients = { { type = "item", name = "tin-plate", amount = 2 } }
-    elseif metal == "titanium" then
-        --if data.raw["item"]["titanium-plate"] then -- bztitanium
+    elseif metal == "Titanium" then
         recipe.ingredients = { { type = "item", name = "titanium-plate", amount = 1 } }
     end
 
-    if data.raw["item"]["glass-plate"] then -- Glass
+    if data.raw["item"]["glass-plate"] then
         table.insert(recipe.ingredients, { type = "item", name = "glass-plate", amount = 1 })
     end
 
