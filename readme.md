@@ -1,9 +1,9 @@
 ## Canisters
 Adds reuseable (or disposable) rocket fuel canisters  
 
-A canister is an additional ingredient for rocket fuel.  
+A canister becomes an additional ingredient for rocket fuel.  
 When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
-This is true for planes, trains and automobiles.  
+This is true for "planes, trains and automobiles".  
 
 Cargo pods will deliver 50 reusable canisters<sup>\*</sup> to the space platform hubs.  
 These are not accounted for with in-game platform hub inventory checks.  
@@ -13,7 +13,7 @@ Startup option to enable reuseable canisters. (default: enabled)
 Disable the option for disposable canisters, which are not returned.  
 
 Startup option to either spill or void canisters on space platform hub inventory overflows.  
-(Applies only when canisters are reuseable)  
+(Only applies when reuseable canisters are enabled)  
 
 Startup option to select the metal for the recipe, if Tin and/or Titanium is active.
 
