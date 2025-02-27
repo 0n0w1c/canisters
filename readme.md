@@ -8,7 +8,7 @@ This is true for planes, trains and automobiles.
 Startup option to enable reuseable canisters (default: enabled)  
 Disable the option for disposable canisters, which are not returned.
 
-Cargo pods will deliver 50<sup>*<sup> reusable canisters to space platform hubs.  
+Cargo pods will deliver 50<sup>*</sup> reusable canisters to space platform hubs.  
 These are not accounted for with in-game platform hub inventory checks.  
 <sup>*</sup> - Tin is a bit fragile for the harsh rigors of space, not all will be returned.
 
