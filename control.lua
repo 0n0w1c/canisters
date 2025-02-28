@@ -1,5 +1,3 @@
---- Canisters Mod for Factorio
---- Handles canister retrieval and spill mechanics for cargo pods.
 --- @module Canisters
 
 -- Load settings from startup configuration
@@ -35,25 +33,23 @@ local function calculate_canisters(silo)
     local total_productivity = silo_productivity + infinite_research_bonus
     if total_productivity > 3 then total_productivity = 3 end
 
-    -- Compute final canisters needed with proper rounding
     return math.floor(base_canisters / (1 + total_productivity) + 0.5)
 end
 
---- Adjusts the number of canisters when using Tin, applying a random 10% reduction.
+--- Adjusts the number of canisters when using Tin, applying a random 10% loss.
 --- @param count number The original canister count before adjustment.
 --- @return number The adjusted canister count.
 local function adjust_for_metal(count)
     if metal == "Tin" then
-        local rng = game.create_random_generator(game.tick)
+        local rng = game.create_random_generator()
 
-        -- Randomly pick between 90% and 100% of count
         return rng(math.floor(count * 0.90), count)
     end
     return count
 end
 
---- Handles a rocket launch event, capturing cargo pod details.
---- @param event EventData.on_rocket_launch_ordered The event data containing rocket launch details.
+--- Store count of canisters required for the launch
+--- @param event EventData.on_rocket_launch_ordered The event data containing launch details.
 local function handle_on_rocket_launch_ordered(event)
     local silo = event.rocket_silo
     local rocket = event.rocket
@@ -73,7 +69,6 @@ local function handle_on_rocket_launch_ordered(event)
     end
 end
 
-
 --- Finds the base at a given position.
 --- @param surface LuaSurface The game surface to search on.
 --- @param position MapPosition The exact position to check.
@@ -83,6 +78,42 @@ local function find_base_at_position(surface, position)
     return surface.find_entity(base_name, position)
 end
 
+--- Prunes old storage entries by removing expired rocket cargo pods.
+--- Alerts players if canisters are lost due to expiration.
+--- @param entity LuaEntity The entity to alert on
+local function prune_storage(entity)
+    local current_tick = game.tick
+    local expired_time = 3600 -- 60 seconds (3600 ticks)
+    local to_remove = {}
+
+    for unit_number, pod_data in pairs(storage.rocket_cargo_pods) do
+        if current_tick - pod_data.tick >= expired_time then
+            -- Store canisters count safely before removing entry
+            local canisters_lost = pod_data.canisters
+
+            -- Alert players about canisters lost to the void
+            for _, player in pairs(game.connected_players) do
+                if player.force == entity.force then
+                    player.add_custom_alert(
+                        entity,
+                        { type = "virtual", name = "canisters-void-alert" },
+                        canisters_lost .. " canisters have been lost to the void!",
+                        true
+                    )
+                end
+            end
+
+            -- Collect for removal
+            table.insert(to_remove, unit_number)
+        end
+    end
+
+    -- Remove expired entries
+    for _, unit_number in ipairs(to_remove) do
+        storage.rocket_cargo_pods[unit_number] = nil
+    end
+end
+
 --- Return the canisters to the base.
 --- @param event EventData.on_cargo_pod_delivered_cargo The event data containing cargo pod delivery details.
 local function handle_on_cargo_pod_delivered_cargo(event)
@@ -90,8 +121,9 @@ local function handle_on_cargo_pod_delivered_cargo(event)
 
     local cargo_pod = event.cargo_pod
     local unit_number = cargo_pod.unit_number
-    local pod_data = storage.rocket_cargo_pods[unit_number]
+    if not (cargo_pod and unit_number) then return end
 
+    local pod_data = storage.rocket_cargo_pods[unit_number]
     if not pod_data then return end
 
     local count = pod_data.canisters
@@ -108,7 +140,7 @@ local function handle_on_cargo_pod_delivered_cargo(event)
 
     local remaining = count - inserted
 
-    -- Handle remaining canisters (spill or void)
+    -- Handle remaining canisters (spill or voided)
     if remaining > 0 then
         if spill then
             -- Spill remaining canisters onto the platform
@@ -146,40 +178,25 @@ local function handle_on_cargo_pod_delivered_cargo(event)
         end
     end
 
-    -- Cleanup: Remove processed cargo pod from storage
+    -- Remove processed cargo pod from storage
     storage.rocket_cargo_pods[unit_number] = nil
+
+    prune_storage(cargo_pod)
 end
 
---- Cleans up old storage entries when the mod configuration changes.
-local function cleanup_old_entries()
-    local current_tick = game.tick
-    local expired_time = 3600 -- 60 seconds (3600 ticks)
-
-    for unit_number, pod_data in pairs(storage.rocket_cargo_pods) do
-        if current_tick - pod_data.tick >= expired_time then
-            storage.rocket_cargo_pods[unit_number] = nil
-        end
-    end
-end
-
---- Registers event handlers for rocket launches and cargo pod deliveries.
 local function register_events()
     script.on_event(defines.events.on_cargo_pod_delivered_cargo, handle_on_cargo_pod_delivered_cargo)
     script.on_event(defines.events.on_rocket_launch_ordered, handle_on_rocket_launch_ordered)
 end
 
---- Initializes the mod and ensures storage is set up properly.
 script.on_init(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
     register_events()
 end)
 
---- Runs cleanup and re-registers events when mod settings are updated.
 script.on_configuration_changed(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
-    cleanup_old_entries() -- Only run cleanup when configuration changes
     register_events()
 end)
 
---- Ensures event handlers are registered when the game is loaded.
 script.on_load(register_events)
