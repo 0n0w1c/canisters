@@ -10,9 +10,10 @@ This is true for "planes, trains and automobiles".
 Rocket silo rocket launched cargo pods deliver reusable canisters*.  
 Note: These are not accounted for with in-game inventory space calculations.  
 
-Startup option to enable reusable canisters (default: Enabled)  
-Startup option to select the metal for the recipe (Default: Steel)  
-Startup option to select the maximum percent of attrition (Default: 10%)  
+Startup Options:  
+Enable reusable canisters (default: Enabled)  
+Select the metal for the recipe (Default: Steel)  
+Select the maximum percent of attrition (Default: 10%)  
 
 Canister recipe:  
 1 steel plate (or 2 tin plate or 1 titanium plate)  
