@@ -14,7 +14,7 @@ end
 data:extend({
     {
         type = "bool-setting",
-        name = "canisters-reuseable-canisters",
+        name = "canisters-reusable-canisters",
         setting_type = "startup",
         default_value = true,
         order = "a"

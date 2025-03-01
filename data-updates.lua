@@ -1,4 +1,4 @@
-local reuseable = settings.startup["canisters-reuseable-canisters"].value
+local reusable = settings.startup["canisters-reusable-canisters"].value
 local metal = settings.startup["canisters-canister-metal"].value
 
 local recycling = {}
@@ -26,7 +26,7 @@ if recipe then
 
     table.insert(data.raw["technology"]["rocket-fuel"].effects, { type = "unlock-recipe", recipe = "canister" })
 
-    if reuseable then
+    if reusable then
         data.raw["item"]["rocket-fuel"].burnt_result = "canister"
         data.raw["item"]["nuclear-fuel"].burnt_result = "canister"
         if data.raw["item"]["plutonium-fuel"] then data.raw["item"]["plutonium-fuel"].burnt_result = "canister" end

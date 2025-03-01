@@ -5,7 +5,7 @@
     "author": "0n0w1c",
     "factorio_version": "2.0",
     "homepage": "",
-    "description": "Adds reuseable (or disposable) canisters",
+    "description": "Adds reusable (or disposable) canisters",
     "dependencies": [
         "base >= 2.0.35",
         "? space-age",

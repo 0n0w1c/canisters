@@ -1,5 +1,5 @@
 ## Canisters
-Introduces reuseable (or disposable) canisters  
+Introduces reusable (or disposable) canisters  
 
 Canisters are added as an additional ingredient for rocket fuel.  
 When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
@@ -9,7 +9,7 @@ Rocket Silo Rocket launched cargo pods deliver reusable canisters<sup>\*</sup>.
 Note: These are not accounted for with in-game inventory checks.  
 ( <sup>\*</sup> ) - Tin is a bit fragile for the harsh rigors of space, but economical.  
 
-Startup option to enable reuseable canisters. (default: enabled)  
+Startup option to enable reusable canisters. (default: enabled)  
 Disable the option for disposable canisters, which are not returned.  
 
 Startup option to select the metal for the recipe, if Tin and/or Titanium is active.  

@@ -1,7 +1,7 @@
 --- @module Canisters
 
 -- Load settings from startup configuration
-local reuseable = settings.startup["canisters-reuseable-canisters"].value
+local reusable = settings.startup["canisters-reusable-canisters"].value
 local metal = settings.startup["canisters-canister-metal"].value
 local space_age = script.active_mods["space-age"]
 local base_canisters = (space_age and 50) or 100
@@ -118,7 +118,7 @@ end
 --- Return canisters to the base.
 --- @param event LuaEvent
 local function handle_on_cargo_pod_delivered_cargo(event)
-    if not reuseable then return end
+    if not reusable then return end
 
     local cargo_pod = event.cargo_pod
     local unit_number = cargo_pod.unit_number
