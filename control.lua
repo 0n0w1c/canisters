@@ -2,10 +2,10 @@
 
 -- Load settings from startup configuration
 local reusable = settings.startup["canisters-reusable-canisters"].value
-local metal = settings.startup["canisters-canister-metal"].value
 local space_age = script.active_mods["space-age"]
 local base_canisters = (space_age and 50) or 100
-local tin_attrition_rate = 0.9
+local attrition_rate_setting = settings.startup["canisters-attrition-rate"].value
+local attrition_rate = 1 - (attrition_rate_setting / 100)
 
 --- Retrieves the infinite research bonus from "rocket-part-productivity" technology.
 --- @param force LuaForce The force (faction/team) conducting the research.
@@ -37,16 +37,15 @@ local function calculate_canisters(silo)
     return math.floor(base_canisters / (1 + total_productivity) + 0.5)
 end
 
---- Adjusts the number of canisters when using Tin, applying a random 10% loss.
+--- Adjusts the number of canisters, applying a random loss.
 --- @param count number The original canister count before adjustment.
 --- @return number The adjusted canister count.
-local function adjust_for_metal(count)
-    if metal == "Tin" then
-        local rng = game.create_random_generator()
-
-        return rng(math.floor(count * tin_attrition_rate), count)
+local function adjust_for_attrition(count)
+    if not storage.rng then
+        storage.rng = game.create_random_generator()
     end
-    return count
+
+    return storage.rng(math.floor(count * attrition_rate), count)
 end
 
 --- Store count of canisters required for the launch
@@ -60,7 +59,7 @@ local function handle_on_rocket_launch_ordered(event)
 
     if cargo_pod and cargo_pod.valid then
         local unit_number = cargo_pod.unit_number
-        local count = adjust_for_metal(calculate_canisters(silo))
+        local count = adjust_for_attrition(calculate_canisters(silo))
 
         -- Store cargo pod details in global storage
         storage.rocket_cargo_pods[unit_number] = {
@@ -84,12 +83,11 @@ end
 --- @param entity LuaEntity The entity to alert on
 local function prune_storage(entity)
     local current_tick = game.tick
-    local expired_time = 3600 -- 60 seconds (3600 ticks)
-    local to_remove = {}
+    local max_ticks = 3600
+    local expired = {}
 
     for unit_number, pod_data in pairs(storage.rocket_cargo_pods) do
-        if current_tick - pod_data.tick >= expired_time then
-            -- Store canisters count safely before removing entry
+        if current_tick - pod_data.tick >= max_ticks then
             local canisters_lost = pod_data.canisters
 
             -- Alert players about canisters lost to the void
@@ -104,13 +102,13 @@ local function prune_storage(entity)
                 end
             end
 
-            -- Collect for removal
-            table.insert(to_remove, unit_number)
+            -- Collect expired cargo pod data
+            table.insert(expired, unit_number)
         end
     end
 
     -- Remove expired entries
-    for _, unit_number in ipairs(to_remove) do
+    for _, unit_number in ipairs(expired) do
         storage.rocket_cargo_pods[unit_number] = nil
     end
 end
@@ -180,11 +178,13 @@ end
 
 script.on_init(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
+    storage.rng = storage.rng or game.create_random_generator()
     register_events()
 end)
 
 script.on_configuration_changed(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
+    storage.rng = storage.rng or game.create_random_generator()
     register_events()
 end)
 

@@ -1,14 +1,11 @@
 local metals = { "Steel" }
-local hidden = true
 
 if mods["bztin"] then
     table.insert(metals, "Tin")
-    hidden = false
 end
 
 if mods["bztitanium"] then
     table.insert(metals, "Titanium")
-    hidden = false
 end
 
 data:extend({
@@ -25,7 +22,14 @@ data:extend({
         setting_type = "startup",
         default_value = "Steel",
         allowed_values = metals,
-        hidden = hidden,
         order = "b"
+    },
+    {
+        type = "int-setting",
+        name = "canisters-attrition-rate",
+        setting_type = "startup",
+        default_value = 10,
+        allowed_values = { 0, 10, 50, 100 },
+        order = "c"
     }
 })

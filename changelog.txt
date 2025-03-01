@@ -1,0 +1,15 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.0.2
+Date: 01.03.2025
+  Bugfixes:
+    - Corrected use of the random generator
+  Changes:
+    - Startup setting for the Maximum percent of attrition (Default: 10)
+    - All makes of canisters now subject to the attrition setting, not just Tin
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 01.03.2025
+  Bugfixes:
+    - None
+  Changes:
+    - Initial release

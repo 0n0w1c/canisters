@@ -1,21 +1,18 @@
 ## Canisters
 Introduces reusable (or disposable) canisters  
 
-Adds logistic challenge and increased utilization and integration of modded materials.  
-Adjustable in complexity from disposable canisters made of Steel to reusable canisters made of Tin and glass.  
+Adds a logistic challenge and extended integration of modded materials.  
 
 Canisters are added as an additional ingredient for rocket fuel.  
 When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
 This is true for "planes, trains and automobiles".  
 
 Rocket silo rocket launched cargo pods deliver reusable canisters*.  
-Note: These are not accounted for with in-game inventory checks.  
-\* - Tin is a bit fragile for the harsh rigors of space, and suffers from attrition, but is economical.  
+Note: These are not accounted for with in-game inventory space calculations.  
 
-Startup option to enable reusable canisters. (default: enabled)  
-Disable the option for disposable canisters, which are not returned.  
-
-Startup option to select the metal for the recipe, if Tin and/or Titanium is active.  
+Startup option to enable reusable canisters (default: Enabled)  
+Startup option to select the metal for the recipe (Default: Steel)  
+Startup option to select the maximum percent of attrition (Default: 10%)  
 
 Canister recipe:  
 1 steel plate (or 2 tin plate or 1 titanium plate)  
