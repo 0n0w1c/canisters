@@ -1,6 +1,9 @@
 ## Canisters
 Introduces reusable (or disposable) canisters  
 
+Adds logistic challenge and increased utilization and integration of modded materials.  
+Adjustable in complexity from disposable canisters made of Steel to reusable canisters made of Tin and glass.  
+
 Canisters are added as an additional ingredient for rocket fuel.  
 When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
 This is true for "planes, trains and automobiles".  
