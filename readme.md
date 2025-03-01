@@ -7,7 +7,7 @@ Canisters are added as an additional ingredient for rocket fuel.
 When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
 This is true for "planes, trains and automobiles".  
 
-Rocket silo rocket launched cargo pods deliver reusable canisters*.  
+Rocket silo rocket launched cargo pods deliver reusable canisters.  
 Note: These are not accounted for with in-game inventory space calculations.  
 
 Startup Options:  
