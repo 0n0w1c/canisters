@@ -7,7 +7,7 @@ This is true for "planes, trains and automobiles".
 
 Rocket Silo Rocket launched cargo pods deliver reusable canisters*.  
 Note: These are not accounted for with in-game inventory checks.  
-* - Tin is a bit fragile for the harsh rigors of space, and suffers from attrition, but is economical.  
+\* - Tin is a bit fragile for the harsh rigors of space, and suffers from attrition, but is economical.  
 
 Startup option to enable reusable canisters. (default: enabled)  
 Disable the option for disposable canisters, which are not returned.  
