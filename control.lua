@@ -21,7 +21,7 @@ end
 
 --- Calculates the number of canisters required based on productivity bonuses.
 --- @param silo LuaEntity The rocket silo launching the cargo pod.
---- @return number The adjusted number of canisters required.
+--- @return number number The adjusted number of canisters required.
 local function calculate_canisters(silo)
     if not (silo and silo.valid) then
         return base_canisters
@@ -49,7 +49,7 @@ local function adjust_for_attrition(count)
 end
 
 --- Store count of canisters required for the launch
---- @param event LuaEvent
+--- @param event EventData
 local function handle_on_rocket_launch_ordered(event)
     local silo = event.rocket_silo
     local rocket = event.rocket
@@ -114,7 +114,7 @@ local function prune_storage(entity)
 end
 
 --- Return canisters to the base.
---- @param event LuaEvent
+--- @param event EventData
 local function handle_on_cargo_pod_delivered_cargo(event)
     if not reusable then return end
 
