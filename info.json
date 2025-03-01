@@ -8,9 +8,11 @@
     "description": "Adds reuseable (or disposable) canisters",
     "dependencies": [
         "base >= 2.0.35",
+        "? space-age",
         "? bztin",
         "? bztitanium",
         "? Glass",
-        "? PlutoniumEnergy"
+        "? PlutoniumEnergy",
+        "! LunarLandings"
     ]
 }

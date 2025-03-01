@@ -2,10 +2,10 @@
 
 -- Load settings from startup configuration
 local reuseable = settings.startup["canisters-reuseable-canisters"].value
-local spill = settings.startup["canisters-spill-canisters"].value
 local metal = settings.startup["canisters-canister-metal"].value
 local space_age = script.active_mods["space-age"]
 local base_canisters = (space_age and 50) or 100
+local tin_attrition_rate = 0.9
 
 --- Retrieves the infinite research bonus from "rocket-part-productivity" technology.
 --- @param force LuaForce The force (faction/team) conducting the research.
@@ -13,7 +13,8 @@ local base_canisters = (space_age and 50) or 100
 local function get_infinite_research_bonus(force)
     local tech = force.technologies["rocket-part-productivity"]
     if tech and tech.valid then
-        return tech.level * 0.1 -- Each level adds 10% productivity bonus
+        -- 10% per level
+        return tech.level * 0.1
     end
     return 0
 end
@@ -43,13 +44,13 @@ local function adjust_for_metal(count)
     if metal == "Tin" then
         local rng = game.create_random_generator()
 
-        return rng(math.floor(count * 0.90), count)
+        return rng(math.floor(count * tin_attrition_rate), count)
     end
     return count
 end
 
 --- Store count of canisters required for the launch
---- @param event EventData.on_rocket_launch_ordered The event data containing launch details.
+--- @param event LuaEvent
 local function handle_on_rocket_launch_ordered(event)
     local silo = event.rocket_silo
     local rocket = event.rocket
@@ -59,11 +60,11 @@ local function handle_on_rocket_launch_ordered(event)
 
     if cargo_pod and cargo_pod.valid then
         local unit_number = cargo_pod.unit_number
-        local canisters = adjust_for_metal(calculate_canisters(silo))
+        local count = adjust_for_metal(calculate_canisters(silo))
 
         -- Store cargo pod details in global storage
         storage.rocket_cargo_pods[unit_number] = {
-            canisters = canisters,
+            canisters = count,
             tick = game.tick
         }
     end
@@ -114,8 +115,8 @@ local function prune_storage(entity)
     end
 end
 
---- Return the canisters to the base.
---- @param event EventData.on_cargo_pod_delivered_cargo The event data containing cargo pod delivery details.
+--- Return canisters to the base.
+--- @param event LuaEvent
 local function handle_on_cargo_pod_delivered_cargo(event)
     if not reuseable then return end
 
@@ -140,40 +141,27 @@ local function handle_on_cargo_pod_delivered_cargo(event)
 
     local remaining = count - inserted
 
-    -- Handle remaining canisters (spill or voided)
+    -- Spill the remaining canisters
     if remaining > 0 then
-        if spill then
-            -- Spill remaining canisters onto the platform
-            cargo_pod.surface.spill_item_stack({
-                position = base and base.valid and base.position or cargo_pod.position,
-                stack = { name = "canister", count = remaining }
-            })
+        cargo_pod.surface.spill_item_stack({
+            position = base and base.valid and base.position or cargo_pod.position,
+            stack = { name = "canister", count = remaining }
+        })
 
-            -- Auto-deconstruct spilled canisters
-            local spilled_items = cargo_pod.surface.find_entities_filtered({ name = "item-on-ground" })
-            for _, entity in pairs(spilled_items) do
-                if entity.valid and entity.stack and entity.stack.name == "canister" then
-                    entity.order_deconstruction(base and base.force or cargo_pod.force)
+        -- Auto-deconstruct spilled canisters
+        local spilled_items = cargo_pod.surface.find_entities_filtered({ name = "item-on-ground" })
+        for _, item in pairs(spilled_items) do
+            if item.valid and item.stack and item.stack.name == "canister" then
+                if not item.to_be_deconstructed() then
+                    item.order_deconstruction(base and base.force or cargo_pod.force)
                 end
             end
+        end
 
-            -- Alert players about the spill
-            for _, player in pairs(game.connected_players) do
-                if player.force == (base and base.force or cargo_pod.force) then
-                    player.add_alert(base or cargo_pod, defines.alert_type.no_platform_storage)
-                end
-            end
-        else
-            -- Alert players about canisters lost in space
-            for _, player in pairs(game.connected_players) do
-                if player.force == (base and base.force or cargo_pod.force) then
-                    player.add_custom_alert(
-                        base or cargo_pod,
-                        { type = "virtual", name = "canisters-void-alert" },
-                        remaining .. " canisters were ejected into space!",
-                        true
-                    )
-                end
+        -- Alert players about the spill
+        for _, player in pairs(game.connected_players) do
+            if player.force == (base and base.force or cargo_pod.force) then
+                player.add_alert(base or cargo_pod, defines.alert_type.no_platform_storage)
             end
         end
     end
@@ -181,6 +169,7 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     -- Remove processed cargo pod from storage
     storage.rocket_cargo_pods[unit_number] = nil
 
+    -- Paranoia
     prune_storage(cargo_pod)
 end
 

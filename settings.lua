@@ -20,19 +20,12 @@ data:extend({
         order = "a"
     },
     {
-        type = "bool-setting",
-        name = "canisters-spill-canisters",
-        setting_type = "startup",
-        default_value = true,
-        order = "b"
-    },
-    {
         type = "string-setting",
         name = "canisters-canister-metal",
         setting_type = "startup",
         default_value = "Steel",
         allowed_values = metals,
         hidden = hidden,
-        order = "c"
+        order = "b"
     }
 })
