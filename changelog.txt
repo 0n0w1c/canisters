@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.4
+Date: 05.03.2025
+  Bugfixes:
+    - Corrected the localised name for the void alert virtual signal in locale.cfg
+  Changes:
+    - Set the canister void alert virtual signal to be hidden
+---------------------------------------------------------------------------------------------------
 Version: 0.0.3
 Date: 01.03.2025
   Bugfixes:

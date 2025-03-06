@@ -96,7 +96,7 @@ local function prune_storage(entity)
                     player.add_custom_alert(
                         entity,
                         { type = "virtual", name = "canisters-void-alert" },
-                        canisters_lost .. " canisters have been lost to the void!",
+                        canisters_lost .. " canisters have been lost to the void of space!",
                         true
                     )
                 end
