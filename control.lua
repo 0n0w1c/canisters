@@ -58,12 +58,19 @@ local function handle_on_rocket_launch_ordered(event)
     if not (silo and silo.valid) then return end
 
     if cargo_pod and cargo_pod.valid then
+        local destination = ""
+        if cargo_pod.cargo_pod_destination.station then
+            destination = tostring(cargo_pod.cargo_pod_destination.station)
+        elseif cargo_pod.cargo_pod_destination.space_platform then
+            destination = tostring(cargo_pod.cargo_pod_destination.space_platform)
+        end
+
         local unit_number = cargo_pod.unit_number
         local count = adjust_for_attrition(calculate_canisters(silo))
 
-        -- Store cargo pod details in global storage
         storage.rocket_cargo_pods[unit_number] = {
             canisters = count,
+            destination = destination,
             tick = game.tick
         }
     end
@@ -125,10 +132,27 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     local pod_data = storage.rocket_cargo_pods[unit_number]
     if not pod_data then return end
 
-    local count = pod_data.canisters
-    local base = find_base_at_position(cargo_pod.surface, cargo_pod.position)
+    local destination = pod_data.destination
 
-    -- Attempt to insert canisters into the base
+    -- If a new platform build, find the surface
+    local base = nil
+    if string.find(destination, "%[LuaSpacePlatform: index=") then
+        local platform_index = string.match(destination, "index=%s*(%d+)%]")
+        local surface_name = "platform-" .. platform_index
+        local surface = game.get_surface(surface_name)
+
+        if surface then
+            base = find_base_at_position(surface, { 0, 0 })
+        end
+    else
+        base = find_base_at_position(cargo_pod.surface, cargo_pod.position)
+    end
+
+    if not base then return end
+
+    local count = pod_data.canisters
+
+    -- Attempt to insert canisters into the base inventory
     local inserted = 0
     if base and base.valid then
         local inventory = base.get_inventory(defines.inventory.chest)
