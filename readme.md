@@ -8,6 +8,8 @@ When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.
 This is true for "planes, trains and automobiles".  
 
 Rocket silo rocket launched cargo pods deliver the empty canisters.  
+These canisters are subject to a random attrition (loss) per launch.  
+Set to the startup option to 0, to disable attrition. 
 
 Startup Options:  
 Enable reusable canisters (default: Enabled)  
