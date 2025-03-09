@@ -10,7 +10,7 @@ local attrition_rate = 1 - (attrition_rate_setting / 100)
 --- Retrieves the infinite research bonus from "rocket-part-productivity" technology.
 --- @param force LuaForce The force (faction/team) conducting the research.
 --- @return number The total bonus from infinite research, where each level adds 10% (0.1).
-local function get_infinite_research_bonus(force)
+local function get_research_bonus(force)
     local tech = force.technologies["rocket-part-productivity"]
     if tech and tech.valid then
         -- 10% per level
@@ -29,9 +29,9 @@ local function calculate_canisters(silo)
 
     local force = silo.force
     local silo_productivity = silo.productivity_bonus or 0
-    local infinite_research_bonus = get_infinite_research_bonus(force)
+    local research_bonus = get_research_bonus(force)
 
-    local total_productivity = silo_productivity + infinite_research_bonus
+    local total_productivity = silo_productivity + research_bonus
     if total_productivity > 3 then total_productivity = 3 end
 
     return math.floor(base_canisters / (1 + total_productivity) + 0.5)
