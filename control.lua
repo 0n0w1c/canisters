@@ -7,13 +7,12 @@ local base_canisters = (space_age and 50) or 100
 local attrition_rate_setting = settings.startup["canisters-attrition-rate"].value
 local attrition_rate = 1 - (attrition_rate_setting / 100)
 
---- Retrieves the infinite research bonus from "rocket-part-productivity" technology.
+--- Retrieves the research bonus from "rocket-part-productivity" technology.
 --- @param force LuaForce The force (faction/team) conducting the research.
---- @return number The total bonus from infinite research, where each level adds 10% (0.1).
+--- @return number number The total bonus from research, each level adds 10%.
 local function get_research_bonus(force)
     local tech = force.technologies["rocket-part-productivity"]
     if tech and tech.valid then
-        -- 10% per level
         return tech.level * 0.1
     end
     return 0
