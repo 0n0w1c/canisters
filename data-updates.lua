@@ -14,6 +14,8 @@ if recipe then
 
     if data.raw["item"]["glass-plate"] then
         table.insert(recipe.ingredients, { type = "item", name = "glass-plate", amount = 1 })
+    elseif data.raw["item"]["glass"] then
+        table.insert(recipe.ingredients, { type = "item", name = "glass", amount = 1 })
     end
 
     if mods["quality"] then recycling.generate_recycling_recipe(recipe) end
