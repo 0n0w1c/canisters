@@ -13,7 +13,7 @@ local attrition_rate = 1 - (attrition_rate_setting / 100)
 local function get_research_bonus(force)
     local tech = force.technologies["rocket-part-productivity"]
     if tech and tech.valid then
-        return tech.level * 0.1
+        return (tech.level - 1) * 0.1
     end
     return 0
 end
@@ -40,11 +40,14 @@ end
 --- @param count number The original canister count before adjustment.
 --- @return number The adjusted canister count.
 local function adjust_for_attrition(count)
+    local random
     if not storage.rng then
         storage.rng = game.create_random_generator()
     end
 
-    return storage.rng(math.floor(count * attrition_rate), count)
+    random = storage.rng(math.floor(count * attrition_rate), count)
+
+    return random
 end
 
 --- Store count of canisters required for the launch

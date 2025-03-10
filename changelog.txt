@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.7
+Date: 09.03.2025
+  Bugfixes:
+    - Corrected the rocket fuel research bonus calculation, resulted in excessive attrition
+  Changes:
+    - None
+---------------------------------------------------------------------------------------------------
 Version: 0.0.6
 Date: 09.03.2025
   Bugfixes:
