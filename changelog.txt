@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.8
+Date: 10.03.2025
+  Bugfixes:
+    - Corrected the base rocket fuel used for 2.0 (without SA) from 100 to 1000
+    - Refactored: destination and position for return of the canisters
+  Changes:
+    - None
+---------------------------------------------------------------------------------------------------
 Version: 0.0.7
 Date: 09.03.2025
   Bugfixes:

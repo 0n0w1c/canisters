@@ -3,7 +3,7 @@
 -- Load settings from startup configuration
 local reusable = settings.startup["canisters-reusable-canisters"].value
 local space_age = script.active_mods["space-age"]
-local base_canisters = (space_age and 50) or 100
+local base_canisters = (space_age and 50) or 1000
 local attrition_rate_setting = settings.startup["canisters-attrition-rate"].value
 local attrition_rate = 1 - (attrition_rate_setting / 100)
 
@@ -59,12 +59,12 @@ local function handle_on_rocket_launch_ordered(event)
 
     if not (silo and silo.valid) then return end
 
-    if cargo_pod and cargo_pod.valid then
-        local destination = ""
-        if cargo_pod.cargo_pod_destination.station then
-            destination = tostring(cargo_pod.cargo_pod_destination.station)
-        elseif cargo_pod.cargo_pod_destination.space_platform then
-            destination = tostring(cargo_pod.cargo_pod_destination.space_platform)
+    if cargo_pod and cargo_pod.valid and cargo_pod.cargo_pod_destination then
+        local destination = nil
+        if cargo_pod.cargo_pod_destination.space_platform then
+            destination = cargo_pod.cargo_pod_destination.space_platform
+        elseif cargo_pod.cargo_pod_destination.station then
+            destination = cargo_pod.cargo_pod_destination.station
         end
 
         local unit_number = cargo_pod.unit_number
@@ -134,46 +134,39 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     local pod_data = storage.rocket_cargo_pods[unit_number]
     if not pod_data then return end
 
-    local destination = pod_data.destination
+    local surface = pod_data.destination and pod_data.destination.surface or nil
+    if not surface then return end
 
-    -- If a new platform build, find the surface
-    local base = nil
-    if string.find(destination, "%[LuaSpacePlatform: index=") then
-        local platform_index = string.match(destination, "index=%s*(%d+)%]")
-        local surface_name = "platform-" .. platform_index
-        local surface = game.get_surface(surface_name)
-
-        if surface then
-            base = find_base_at_position(surface, { 0, 0 })
-        end
+    local position
+    if string.match(surface.name, "platform%-(%d+)") then
+        position = { x = 0, y = 0 }
     else
-        base = find_base_at_position(cargo_pod.surface, cargo_pod.position)
+        position = cargo_pod.position
     end
 
-    if not base then return end
+    local base = find_base_at_position(surface, position) or nil
+    if not (base and base.valid) then return end
 
     local count = pod_data.canisters
 
     -- Attempt to insert canisters into the base inventory
     local inserted = 0
-    if base and base.valid then
-        local inventory = base.get_inventory(defines.inventory.chest)
-        if inventory then
-            inserted = inventory.insert({ name = "canister", count = count })
-        end
+    local inventory = base.get_inventory(defines.inventory.chest)
+    if inventory then
+        inserted = inventory.insert({ name = "canister", count = count })
     end
 
     local remaining = count - inserted
 
     -- Spill the remaining canisters
     if remaining > 0 then
-        cargo_pod.surface.spill_item_stack({
-            position = base and base.valid and base.position or cargo_pod.position,
+        surface.spill_item_stack({
+            position = base.position,
             stack = { name = "canister", count = remaining }
         })
 
         -- Auto-deconstruct spilled canisters
-        local spilled_items = cargo_pod.surface.find_entities_filtered({ name = "item-on-ground" })
+        local spilled_items = surface.find_entities_filtered({ name = "item-on-ground" })
         for _, item in pairs(spilled_items) do
             if item.valid and item.stack and item.stack.name == "canister" then
                 if not item.to_be_deconstructed() then
