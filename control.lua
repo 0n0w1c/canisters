@@ -128,8 +128,9 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     if not reusable then return end
 
     local cargo_pod = event.cargo_pod
+    if not (cargo_pod and cargo_pod.valid and cargo_pod.unit_number) then return end
+
     local unit_number = cargo_pod.unit_number
-    if not (cargo_pod and unit_number) then return end
 
     local pod_data = storage.rocket_cargo_pods[unit_number]
     if not pod_data then return end
@@ -161,12 +162,13 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     -- Spill the remaining canisters
     if remaining > 0 then
         surface.spill_item_stack({
-            position = base.position,
+            position = position,
             stack = { name = "canister", count = remaining }
         })
 
         -- Auto-deconstruct spilled canisters
         local spilled_items = surface.find_entities_filtered({ name = "item-on-ground" })
+
         for _, item in pairs(spilled_items) do
             if item.valid and item.stack and item.stack.name == "canister" then
                 if not item.to_be_deconstructed() then
