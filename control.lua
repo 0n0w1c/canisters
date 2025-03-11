@@ -40,42 +40,11 @@ end
 --- @param count number The original canister count before adjustment.
 --- @return number The adjusted canister count.
 local function adjust_for_attrition(count)
-    local random
     if not storage.rng then
         storage.rng = game.create_random_generator()
     end
 
-    random = storage.rng(math.floor(count * attrition_rate), count)
-
-    return random
-end
-
---- Store count of canisters required for the launch
---- @param event EventData
-local function handle_on_rocket_launch_ordered(event)
-    local silo = event.rocket_silo
-    local rocket = event.rocket
-    local cargo_pod = rocket and rocket.attached_cargo_pod
-
-    if not (silo and silo.valid) then return end
-
-    if cargo_pod and cargo_pod.valid and cargo_pod.cargo_pod_destination then
-        local destination = nil
-        if cargo_pod.cargo_pod_destination.space_platform then
-            destination = cargo_pod.cargo_pod_destination.space_platform
-        elseif cargo_pod.cargo_pod_destination.station then
-            destination = cargo_pod.cargo_pod_destination.station
-        end
-
-        local unit_number = cargo_pod.unit_number
-        local count = adjust_for_attrition(calculate_canisters(silo))
-
-        storage.rocket_cargo_pods[unit_number] = {
-            canisters = count,
-            destination = destination,
-            tick = game.tick
-        }
-    end
+    return storage.rng(math.floor(count * attrition_rate), count)
 end
 
 --- Finds the base at a given position.
@@ -84,6 +53,7 @@ end
 --- @return LuaEntity|nil The platform hub at the position, or nil if none found.
 local function find_base_at_position(surface, position)
     local base_name = space_age and "space-platform-hub" or "cargo-landing-pad"
+
     return surface.find_entity(base_name, position)
 end
 
@@ -122,6 +92,34 @@ local function prune_storage(entity)
     end
 end
 
+--- Store count of canisters required for the launch
+--- @param event EventData
+local function handle_on_rocket_launch_ordered(event)
+    local silo = event.rocket_silo
+    local rocket = event.rocket
+    local cargo_pod = rocket and rocket.attached_cargo_pod
+
+    if not (silo and silo.valid) then return end
+
+    if cargo_pod and cargo_pod.valid and cargo_pod.cargo_pod_destination then
+        local destination = nil
+        if cargo_pod.cargo_pod_destination.space_platform then
+            destination = cargo_pod.cargo_pod_destination.space_platform
+        elseif cargo_pod.cargo_pod_destination.station then
+            destination = cargo_pod.cargo_pod_destination.station
+        end
+
+        local unit_number = cargo_pod.unit_number
+        local count = adjust_for_attrition(calculate_canisters(silo))
+
+        storage.rocket_cargo_pods[unit_number] = {
+            canisters = count,
+            destination = destination,
+            tick = game.tick
+        }
+    end
+end
+
 --- Return canisters to the base.
 --- @param event EventData
 local function handle_on_cargo_pod_delivered_cargo(event)
@@ -145,6 +143,7 @@ local function handle_on_cargo_pod_delivered_cargo(event)
         position = cargo_pod.position
     end
 
+    -- base is either cargo landing pad or space platform hub
     local base = find_base_at_position(surface, position) or nil
     if not (base and base.valid) then return end
 
@@ -193,8 +192,8 @@ local function handle_on_cargo_pod_delivered_cargo(event)
 end
 
 local function register_events()
-    script.on_event(defines.events.on_cargo_pod_delivered_cargo, handle_on_cargo_pod_delivered_cargo)
     script.on_event(defines.events.on_rocket_launch_ordered, handle_on_rocket_launch_ordered)
+    script.on_event(defines.events.on_cargo_pod_delivered_cargo, handle_on_cargo_pod_delivered_cargo)
 end
 
 script.on_init(function()
