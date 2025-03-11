@@ -9,7 +9,7 @@ local attrition_rate = 1 - (attrition_rate_setting / 100)
 
 --- Retrieves the research bonus from "rocket-part-productivity" technology.
 --- @param force LuaForce The force (faction/team) conducting the research.
---- @return number number The total bonus from research, each level adds 10%.
+--- @return number The total bonus from research, each level adds 10%.
 local function get_research_bonus(force)
     local tech = force.technologies["rocket-part-productivity"]
     if tech and tech.valid then
@@ -20,7 +20,7 @@ end
 
 --- Calculates the number of canisters required based on productivity bonuses.
 --- @param silo LuaEntity The rocket silo launching the cargo pod.
---- @return number number The adjusted number of canisters required.
+--- @return number The adjusted number of canisters required.
 local function calculate_canisters(silo)
     if not (silo and silo.valid) then
         return base_canisters
