@@ -92,7 +92,7 @@ local function prune_storage(entity)
     end
 end
 
---- Store count of canisters required for the launch
+--- Store the count of canisters required for the launch
 --- @param event EventData
 local function handle_on_rocket_launch_ordered(event)
     local silo = event.rocket_silo
