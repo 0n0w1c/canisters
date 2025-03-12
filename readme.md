@@ -18,7 +18,7 @@ Select the maximum percent of attrition (default: 10%)
 
 Canister recipe:  
 1 steel plate (or 2 tin plate or 1 titanium plate)  
-Additionally, if glass is available, the recipe will include 1 glass (-plate)  
+Additionally, if glass is available, the recipe will include 1 glass (plate)  
 
 *Supported and recommended mods:*  
 [Tin](https://mods.factorio.com/mod/bztin)  
