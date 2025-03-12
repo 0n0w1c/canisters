@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.12
+Date: 12.03.2025
+  Bugfixes:
+    - Refactored: replaced static rocket fuel recipe updates with dynamic updates
+  Changes:
+    - Added a canister to recipes that result in rocket fuel (contribution from Zwikkry)
+      This should include all alternate recipes, including modded recipes
+---------------------------------------------------------------------------------------------------
 Version: 0.0.11
 Date: 11.03.2025
   Bugfixes:
