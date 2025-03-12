@@ -26,6 +26,20 @@ if recipe then
         if mods["quality"] then recycling.generate_recycling_recipe(rocket_fuel_recipe) end
     end
 
+    if mods["space-age"] then
+        local ammonia_rocket_fuel_recipe = data.raw["recipe"]["ammonia-rocket-fuel"]
+        if ammonia_rocket_fuel_recipe then
+            table.insert(ammonia_rocket_fuel_recipe.ingredients, { type = "item", name = "canister", amount = 1 })
+            if mods["quality"] then recycling.generate_recycling_recipe(ammonia_rocket_fuel_recipe) end
+        end
+
+        local rocket_fuel_from_jelly_recipe = data.raw["recipe"]["rocket-fuel-from-jelly"]
+        if rocket_fuel_from_jelly_recipe then
+            table.insert(rocket_fuel_from_jelly_recipe.ingredients, { type = "item", name = "canister", amount = 1 })
+            if mods["quality"] then recycling.generate_recycling_recipe(rocket_fuel_from_jelly_recipe) end
+        end
+    end
+
     table.insert(data.raw["technology"]["rocket-fuel"].effects, { type = "unlock-recipe", recipe = "canister" })
 
     if reusable then
