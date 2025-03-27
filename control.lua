@@ -133,7 +133,8 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     local pod_data = storage.rocket_cargo_pods[unit_number]
     if not pod_data then return end
 
-    local surface = pod_data.destination and pod_data.destination.surface or nil
+    local destination = pod_data.destination
+    local surface = (destination and destination.valid) and destination.surface or nil
     if not surface then return end
 
     local position
