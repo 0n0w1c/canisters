@@ -1,5 +1,3 @@
---- @module Canisters
-
 -- Load settings from startup configuration
 local reusable = settings.startup["canisters-reusable-canisters"].value
 local space_age = script.active_mods["space-age"]
