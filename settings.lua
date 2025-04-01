@@ -4,13 +4,6 @@ if mods["bztitanium"] then table.insert(metals, "Titanium") end
 
 data:extend({
     {
-        type = "bool-setting",
-        name = "canisters-reusable-canisters",
-        setting_type = "startup",
-        default_value = true,
-        order = "a"
-    },
-    {
         type = "string-setting",
         name = "canisters-canister-metal",
         setting_type = "startup",

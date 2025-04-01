@@ -1,4 +1,3 @@
-local reusable = settings.startup["canisters-reusable-canisters"].value
 local metal = settings.startup["canisters-canister-metal"].value
 
 local recycling = {}

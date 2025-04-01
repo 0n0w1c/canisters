@@ -1,5 +1,4 @@
 -- Load settings from startup configuration
-local reusable = settings.startup["canisters-reusable-canisters"].value
 local space_age = script.active_mods["space-age"]
 local base_canisters = (space_age and 50) or 1000
 local attrition_rate_setting = settings.startup["canisters-attrition-rate"].value
@@ -31,7 +30,9 @@ local function calculate_canisters(silo)
     local total_productivity = silo_productivity + research_bonus
     if total_productivity > 3 then total_productivity = 3 end
 
-    return math.floor(base_canisters / (1 + total_productivity) + 0.5)
+    local return_amount = math.floor(base_canisters * attrition_rate / (1 + total_productivity) + 0.5)
+
+    return return_amount
 end
 
 --- Finds the base at a given position.
@@ -97,21 +98,20 @@ local function handle_on_rocket_launch_ordered(event)
         end
 
         local unit_number = cargo_pod.unit_number
-        --local count = adjust_for_attrition(calculate_canisters(silo))
         local count = calculate_canisters(silo)
-
-        storage.rocket_cargo_pods[unit_number] = {
-            canisters = count,
-            destination = destination,
-            tick = game.tick
-        }
+        if count > 1 then
+            storage.rocket_cargo_pods[unit_number] = {
+                canisters = count,
+                destination = destination,
+                tick = game.tick
+            }
+        end
     end
 end
 
 --- Return canisters to the base.
 --- @param event EventData
 local function handle_on_cargo_pod_delivered_cargo(event)
-    if not reusable then return end
 
     local cargo_pod = event.cargo_pod
     if not (cargo_pod and cargo_pod.valid and cargo_pod.unit_number) then return end

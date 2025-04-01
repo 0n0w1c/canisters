@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 01.04.2025
+  Bugfixes:
+    - None
+  Changes:
+    - Removed the startup setting for reusable/disposable
+      For what was disposable (0 returned), set the attrition rate to 100
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 01.04.2025
   Bugfixes:
