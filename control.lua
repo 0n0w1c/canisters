@@ -18,7 +18,7 @@ end
 
 --- Calculates the number of canisters required based on productivity bonuses.
 --- @param silo LuaEntity The rocket silo launching the cargo pod.
---- @return number The adjusted number of canisters required.
+--- @return number The calculated number of canisters required.
 local function calculate_canisters(silo)
     if not (silo and silo.valid) then
         return base_canisters
@@ -32,17 +32,6 @@ local function calculate_canisters(silo)
     if total_productivity > 3 then total_productivity = 3 end
 
     return math.floor(base_canisters / (1 + total_productivity) + 0.5)
-end
-
---- Adjusts the number of canisters, applying a random loss.
---- @param count number The original canister count before adjustment.
---- @return number The adjusted canister count.
-local function adjust_for_attrition(count)
-    if not storage.rng then
-        storage.rng = game.create_random_generator()
-    end
-
-    return storage.rng(math.floor(count * attrition_rate), count)
 end
 
 --- Finds the base at a given position.
@@ -108,7 +97,8 @@ local function handle_on_rocket_launch_ordered(event)
         end
 
         local unit_number = cargo_pod.unit_number
-        local count = adjust_for_attrition(calculate_canisters(silo))
+        --local count = adjust_for_attrition(calculate_canisters(silo))
+        local count = calculate_canisters(silo)
 
         storage.rocket_cargo_pods[unit_number] = {
             canisters = count,
@@ -197,13 +187,11 @@ end
 
 script.on_init(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
-    storage.rng = storage.rng or game.create_random_generator()
     register_events()
 end)
 
 script.on_configuration_changed(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
-    storage.rng = storage.rng or game.create_random_generator()
     register_events()
 end)
 

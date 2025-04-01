@@ -1,20 +1,17 @@
-## Canisters
+#### Canisters
 Introduces reusable (or disposable) canisters  
 
 Adds a logistic challenge and extended integration of modded materials.  
-
 Canisters are added as an additional ingredient for rocket fuel.  
-When rocket (nuclear/plutonium) fuel is used, an empty canister is returned.  
-This is true for "planes, trains and automobiles".  
 
-Rocket silo rocket launched cargo pods deliver the empty canisters.  
-These canisters are subject to a random attrition per launch.  
-Set the startup option to 0, to disable attrition. 
+Rocket silo launched cargo pods deliver the reusable canisters.  
+Canisters are subject to an attrition loss per launch.  
+Set the startup option to 0, to disable attrition.  
 
 Startup Options:  
 Enable reusable canisters (default: Enabled)  
 Select the metal for the recipe (default: Steel)  
-Select the maximum percent of attrition (default: 10%)  
+Select the percent of attrition (default: 10%)  
 
 Canister recipe:  
 1 steel plate (or 2 tin plate or 1 titanium plate)  

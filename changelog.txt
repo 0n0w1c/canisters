@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 01.04.2025
+  Bugfixes:
+    - Removed burnt_result for rocket, nuclear and plutonium fuel
+  Changes:
+    - Rocket fuel burned as fuel in vehicles and structures no longer returns canisters
+      Possible excess of canisters due to the productivity bonus of rocket fuel production
+    - Startup setting for attrition rate accepts values from 0 to 100
+---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 28.03.2025
   Bugfixes:

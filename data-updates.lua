@@ -46,9 +46,3 @@ for _, check_recipe in pairs(recipes) do
 end
 
 table.insert(data.raw["technology"]["rocket-fuel"].effects, { type = "unlock-recipe", recipe = "canister" })
-
-if reusable then
-    data.raw["item"]["rocket-fuel"].burnt_result = "canister"
-    data.raw["item"]["nuclear-fuel"].burnt_result = "canister"
-    if data.raw["item"]["plutonium-fuel"] then data.raw["item"]["plutonium-fuel"].burnt_result = "canister" end
-end
