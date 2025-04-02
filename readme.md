@@ -16,7 +16,7 @@ Canister recipe:
 1 steel plate (or 2 tin plate or 1 titanium plate)  
 Additionally, if glass is available, the recipe will include 1 glass (plate)  
 
-*Supported and recommended mods:*  
+*Supported mods:*  
 [Tin](https://mods.factorio.com/mod/bztin)  
 [Titanium](https://mods.factorio.com/mod/bztitanium)  
 [Glass](https://mods.factorio.com/mod/Glass)  
