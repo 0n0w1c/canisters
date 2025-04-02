@@ -12,7 +12,7 @@ Date: 02.04.2025
   Bugfixes:
     - None
   Changes:
-    - Added Planet Maraxis and Mulana and Moon of Nauvis as dependencies (mod load order)
+    - Added Planet Maraxis and Mulana, Moon of Nauvis as dependencies (mod load order)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 01.04.2025
