@@ -1,6 +1,6 @@
 {
     "name": "canisters",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "title": "Canisters",
     "author": "0n0w1c",
     "factorio_version": "2.0",
@@ -15,6 +15,7 @@
         "? aai-industry",
         "? PlutoniumEnergy",
         "? crushing-industry",
+        "? planet-muluna",
         "! LunarLandings"
     ]
 }
