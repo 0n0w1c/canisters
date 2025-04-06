@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 06.04.2025
+  Bugfixes:
+    - None
+  Changes:
+    - Shortcut to pop up the rocket fuel productivity module settings gui
+    - Added the Rocket fuel productivity module setting gui 
+    - Can assign a custom value for better performace, surface scanned value is cached
+    - Calculated attrition rate is near net zero, but should always be a net negative
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 02.04.2025
   Bugfixes:

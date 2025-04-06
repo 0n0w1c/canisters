@@ -1,12 +1,16 @@
 data:extend({
     {
-        type = "virtual-signal",
-        name = "canisters-void-alert",
-        icon = "__core__/graphics/too-far.png",
-        icon_size = 32,
-        subgroup = "virtual-signal",
-        order = "z[canisters]-a[void-alert]",
-        hidden = true
+        type = "shortcut",
+        name = "rfs-shortcut",
+        localised_name = { "", "[item=rocket-fuel] [item=productivity-module-3]" },
+        order = "a[rocket]-b[fuel-productivity]",
+        action = "lua",
+        toggleable = false,
+        icon = "__base__/graphics/icons/rocket-fuel.png",
+        icon_size = 64,
+        small_icon = "__base__/graphics/icons/rocket-fuel.png",
+        small_icon_size = 64,
+        associated_control_input = "give-rfs-toggle-gui"
     }
 })
 
