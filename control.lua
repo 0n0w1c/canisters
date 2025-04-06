@@ -123,7 +123,6 @@ end
 
 local function calculate_canisters(silo)
     if not (silo and silo.valid) then
-        game.print("Silo is invalid. Using base canisters: " .. base_canisters)
         return base_canisters
     end
 
@@ -134,26 +133,26 @@ local function calculate_canisters(silo)
     local part_research_bonus = get_research_bonus(force, "rocket-part-productivity")
     local fuel_research_bonus = get_research_bonus(force, "rocket-fuel-productivity")
 
-    local total_fuel_productivity_bonus = fuel_research_bonus + module_bonus
-    if total_fuel_productivity_bonus > 3 then total_fuel_productivity_bonus = 3 end
+    local total_fuel_bonus = fuel_research_bonus + module_bonus
+    if total_fuel_bonus > 3 then total_fuel_bonus = 3 end
 
-    local attrition_rate = 1 - total_fuel_productivity_bonus / 4
+    local attrition_rate = 1 - total_fuel_bonus / 4
 
-    local total_productivity = silo_productivity + part_research_bonus + 1
-    if total_productivity > 3 then total_productivity = 3 end
+    local total_part_bonus = silo_productivity + part_research_bonus
+    if total_part_bonus > 3 then total_part_bonus = 3 end
 
-    local canisters = math.floor(base_canisters * attrition_rate / total_productivity)
+    local canisters = math.floor(base_canisters * attrition_rate / (1 + total_part_bonus))
 
     --[[
     game.print("--- Canister Calculation Debug ---")
     game.print("Base canisters: " .. base_canisters)
     game.print("Module bonus: " .. string.format("%.3f", module_bonus))
+    game.print("Fuel research bonus: " .. string.format("%.3f", fuel_research_bonus))
+    game.print("Total rocket fuel bonus (capped): " .. string.format("%.3f", total_fuel_bonus))
     game.print("Silo productivity: " .. string.format("%.3f", silo_productivity))
     game.print("Part research bonus: " .. string.format("%.3f", part_research_bonus))
-    game.print("Fuel research bonus: " .. string.format("%.3f", fuel_research_bonus))
-    game.print("Total fuel productivity bonus (capped): " .. string.format("%.3f", total_fuel_productivity_bonus))
+    game.print("Total rocket part bonus (capped): " .. string.format("%.3f", total_part_bonus))
     game.print("Attrition rate: " .. string.format("%.3f", attrition_rate))
-    game.print("Total productivity (capped): " .. string.format("%.3f", total_productivity))
     game.print("Final canisters: " .. canisters)
     ]]
 
