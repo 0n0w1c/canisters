@@ -44,7 +44,7 @@ function get_surface_rocket_fuel_productivity(surface)
 
     local names
     if surface_name == "aquilo" then
-        names = { "cryogenic", "chemical-plant", "assembling-machine-2", "assembling-machine-3" }
+        names = { "cryogenic-plant", "chemical-plant", "assembling-machine-2", "assembling-machine-3" }
     elseif surface_name == "gleba" then
         names = { "biochamber", "assembling-machine-2", "assembling-machine-3" }
     else
