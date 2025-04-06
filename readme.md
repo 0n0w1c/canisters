@@ -1,16 +1,22 @@
 #### Canisters
 Introduces reusable canisters for rocket launches  
 
+*Version 0.2.0 is a major upgrade, significant breaking changes.*  
+
 Adds a logistic challenge and extended integration of modded materials.  
 Canisters are added as an additional ingredient for rocket fuel.  
 
-Rocket silo launched cargo pods deliver the canisters.  
+Rocket silo launched cargo pods deliver the returned canisters.  
 Canisters are subject to an attrition loss per launch.  
-Set the startup option to 0 to disable attrition and set it to 100 for no canisters to be returned.  
 
-Startup Options:  
+Returned cansiters must be refurbished before re-use.  
+
+Shortcut to access the per planet rocket fuel productivity settings.  
+* For best performance, change from Calculated to Assigned, using the calculated value.  
+* Make sure to update when changing modules for rocket fuel production.  
+
+Startup Option:  
 Select the metal for the recipe (default: Steel)  
-Select the percent of attrition (default: 10%)  
 
 Canister recipe:  
 1 steel plate (or 2 tin plate or 1 titanium plate)  
