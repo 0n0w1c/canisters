@@ -131,11 +131,10 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     custom_right.style.horizontal_align = "right"
     custom_right.style.vertical_align = "center"
 
-    -- Custom value dropdown options (sums of 0-4 of 4, 6, 10)
-    local custom_value_options = {
-        "0", "4", "6", "8", "10", "12", "14", "16", "18", "20",
-        "22", "24", "26", "28", "30", "32", "34", "36", "40"
-    }
+    local custom_value_options = {}
+    for i = 0, 90 do
+        table.insert(custom_value_options, tostring(i))
+    end
 
     local selected_custom_index = 1
     for index, value in ipairs(custom_value_options) do
