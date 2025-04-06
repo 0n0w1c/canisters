@@ -62,18 +62,11 @@ function get_surface_rocket_fuel_productivity(surface)
     for _, assembler in pairs(assembling_machines) do
         local recipe = assembler.get_recipe()
         if recipe and recipe.valid and recipe.prototype then
-            local proto = recipe.prototype
+            local recipe_prototype = recipe.prototype
             local produces_rocket_fuel = false
 
-            if proto.main_product and proto.main_product.name == "rocket-fuel" then
+            if recipe_prototype.main_product and recipe_prototype.main_product.name == "rocket-fuel" then
                 produces_rocket_fuel = true
-            elseif proto.results then
-                for _, result in pairs(proto.results) do
-                    if result.name == "rocket-fuel" then
-                        produces_rocket_fuel = true
-                        break
-                    end
-                end
             end
 
             if produces_rocket_fuel then
