@@ -26,11 +26,9 @@ function get_surface_rocket_fuel_productivity(surface)
     local surface_name = surface.name
     local current_tick = game.tick
 
-    -- Default cache life in ticks (if no custom duration set)
     local default_duration_ticks = 60 * 60
     local cache_life = default_duration_ticks
 
-    -- Check if user has a cache duration setting for this surface
     local settings = storage.rfs_surface_settings and storage.rfs_surface_settings[surface_name]
     if settings and settings.cache_duration then
         local minutes = tonumber(settings.cache_duration)
@@ -39,13 +37,11 @@ function get_surface_rocket_fuel_productivity(surface)
         end
     end
 
-    -- Use cache if it's still fresh
     local cache = rocket_fuel_productivity_cache[surface_name]
     if cache and (current_tick - cache.tick) < cache_life then
         return cache.average
     end
 
-    -- Recalculate productivity
     local names
     if surface_name == "aquilo" then
         names = { "cryogenic", "chemical-plant", "assembling-machine-2", "assembling-machine-3" }
@@ -117,7 +113,6 @@ local function get_effective_module_bonus(surface)
         end
     end
 
-    -- fallback if no settings found or invalid
     return get_surface_rocket_fuel_productivity(surface)
 end
 
@@ -236,13 +231,11 @@ local function handle_on_cargo_pod_delivered_cargo(event)
         position = cargo_pod.position
     end
 
-    -- base is either cargo landing pad or space platform hub
     local base = find_base_at_position(surface, position) or nil
     if not (base and base.valid) then return end
 
     local count = pod_data.canisters
 
-    -- Attempt to insert canisters into the base inventory
     local inserted = 0
     local inventory = base.get_inventory(defines.inventory.chest)
     if inventory then
@@ -251,7 +244,6 @@ local function handle_on_cargo_pod_delivered_cargo(event)
 
     local remaining = count - inserted
 
-    -- Spill the remaining canisters
     if remaining > 0 then
         surface.spill_item_stack
         ({
@@ -259,7 +251,6 @@ local function handle_on_cargo_pod_delivered_cargo(event)
             stack = { name = "canister-black", count = remaining }
         })
 
-        -- Auto-deconstruct spilled canisters
         local spilled_items = surface.find_entities_filtered({ name = "item-on-ground" })
 
         for _, item in pairs(spilled_items) do
@@ -270,7 +261,6 @@ local function handle_on_cargo_pod_delivered_cargo(event)
             end
         end
 
-        -- Alert players about the spill
         for _, player in pairs(game.connected_players) do
             if player.force == (base and base.force or cargo_pod.force) then
                 player.add_alert(base or cargo_pod, defines.alert_type.no_platform_storage)
@@ -278,10 +268,8 @@ local function handle_on_cargo_pod_delivered_cargo(event)
         end
     end
 
-    -- Remove processed cargo pod from storage
     storage.rocket_cargo_pods[unit_number] = nil
 
-    -- Paranoia
     prune_storage()
 end
 
@@ -313,14 +301,12 @@ local function handle_on_gui_selection_state_changed(event)
     storage.rfs_surface_settings = storage.rfs_surface_settings or {}
     local settings = storage.rfs_surface_settings[surface_name] or {}
 
-    -- Handle surface change
     if element.name == "rfs_surface_selector" then
         frame.destroy()
         build_rocket_fuel_settings_gui(player, surface_name, settings)
         return
     end
 
-    -- Handle custom value change
     if element.name == "rfs_custom_value" then
         local selected_value = element.items[element.selected_index]
         if selected_value then
@@ -328,7 +314,6 @@ local function handle_on_gui_selection_state_changed(event)
         end
     end
 
-    -- Handle cache duration change
     if element.name == "rfs_cache_duration" then
         local selected_value = element.items[element.selected_index]
         if selected_value then
@@ -388,7 +373,8 @@ local function handle_on_gui_checked_state_changed(event)
     }
 
     frame.destroy()
-    build_rocket_fuel_settings_gui(player, selected_surface)
+    preset = storage.rfs_surface_settings
+    build_rocket_fuel_settings_gui(player, selected_surface, preset)
 end
 
 local function handle_rfs_push_button_gui(event)

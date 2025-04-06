@@ -21,6 +21,10 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     local custom_value = tonumber(preset.custom_value or saved.custom_value)
         or math.floor(get_surface_rocket_fuel_productivity(selected_surface) * 100 + 0.5)
 
+    if use_cached then
+        custom_value = math.floor(get_surface_rocket_fuel_productivity(selected_surface) * 100 + 0.5)
+    end
+
     local cache_duration = preset.cache_duration or saved.cache_duration or "1"
 
     local gui_root = player.gui.screen
@@ -73,7 +77,7 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     -- Surface selector dropdown
     local surface_names = {}
     for _, surface in pairs(game.surfaces) do
-        if not EXCLUDED_SURFACES[surface.name] then
+        if surface.planet and not EXCLUDED_SURFACES[surface.name] then
             table.insert(surface_names, surface.name)
         end
     end
@@ -134,9 +138,9 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     }
 
     local selected_custom_index = 1
-    for i, val in ipairs(custom_value_options) do
-        if val == tostring(custom_value) then
-            selected_custom_index = i
+    for index, value in ipairs(custom_value_options) do
+        if value == tostring(custom_value) then
+            selected_custom_index = index
             break
         end
     end
