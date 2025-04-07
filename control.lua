@@ -26,6 +26,9 @@ end
 --- @return number The average productivity bonus on that surface for the given force.
 function get_surface_rocket_fuel_productivity(surface, force)
     if not surface then return 0 end
+    if not (force and force.technologies["rocket-fuel"] and force.technologies["rocket-fuel"].researched) then
+        return 0
+    end
 
     local surface_name = surface.name
     local current_tick = game.tick
