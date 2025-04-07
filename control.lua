@@ -7,10 +7,12 @@ local base_canisters = (space_age and 50) or 1000
 -- Stores per-surface productivity averages and last update tick
 local rocket_fuel_productivity_cache = {}
 
---- Retrieves the productivity bonus from a given research technology.
---- @param force LuaForce # The force (e.g. player faction) that owns the technology.
---- @param technology_name string # The internal name of the technology (e.g., "rocket-part-productivity").
---- @return number # The productivity bonus as a decimal (e.g., 0.3 for 30%).
+--- Calculates the productivity bonus from a research technology.
+--- This is based on the technology's level (each level adds 10%).
+---
+--- @param force LuaForce               The force (e.g. player's faction) that owns the technology.
+--- @param technology_name string       The name of the technology (e.g., "rocket-part-productivity").
+--- @return number                      The productivity bonus as a decimal (e.g., 0.3 for 30%).
 local function get_research_bonus(force, technology_name)
     local tech = force.technologies[technology_name]
     if tech and tech.valid then
@@ -19,11 +21,17 @@ local function get_research_bonus(force, technology_name)
     return 0
 end
 
---- Calculates or retrieves the cached productivity bonus from assemblers producing rocket fuel on a surface.
---- Filters by force to ensure only that force's buildings are considered.
---- @param surface LuaSurface
---- @param force LuaForce
---- @return number The average productivity bonus on that surface for the given force.
+--- Calculates or retrieves the cached productivity bonus from assembling machines
+--- producing rocket fuel on a given surface for a specific force.
+--- Caches results per (surface, force) key to reduce performance cost.
+---
+--- The function scans eligible assembling machines belonging to the specified force
+--- and averages their productivity bonus if their current recipe produces rocket fuel.
+--- Returns 0 if the force has not researched the "rocket-fuel" technology.
+---
+--- @param surface LuaSurface           The surface to scan for eligible assembling machines.
+--- @param force LuaForce               The force to filter entities and check research for.
+--- @return number                      The average productivity bonus (e.g., 0.25 for 25%).
 function get_surface_rocket_fuel_productivity(surface, force)
     if not surface then return 0 end
     if not (force and force.technologies["rocket-fuel"] and force.technologies["rocket-fuel"].researched) then
@@ -31,6 +39,7 @@ function get_surface_rocket_fuel_productivity(surface, force)
     end
 
     local surface_name = surface.name
+    local force_name = force.name
     local current_tick = game.tick
 
     local default_duration_ticks = 60 * 60
@@ -44,23 +53,21 @@ function get_surface_rocket_fuel_productivity(surface, force)
         end
     end
 
-    local cache = rocket_fuel_productivity_cache[surface_name]
+    local cache_key = surface_name .. "::" .. force_name
+    local cache = rocket_fuel_productivity_cache[cache_key]
     if cache and (current_tick - cache.tick) < cache_life then
         return cache.average
     end
 
-    local names =
-    {
-        "cryogenic-plant",
-        "chemical-plant",
-        "assembling-machine-2",
-        "assembling-machine-3",
-        "biochamber"
-    }
-
     local assembling_machines = surface.find_entities_filtered {
         type = "assembling-machine",
-        name = names,
+        name = {
+            "cryogenic-plant",
+            "chemical-plant",
+            "assembling-machine-2",
+            "assembling-machine-3",
+            "biochamber"
+        },
         force = force
     }
 
@@ -80,7 +87,7 @@ function get_surface_rocket_fuel_productivity(surface, force)
 
     local average = (count > 0) and (total_bonus / count) or 0
 
-    rocket_fuel_productivity_cache[surface_name] = {
+    rocket_fuel_productivity_cache[cache_key] = {
         average = average,
         tick = current_tick
     }
@@ -88,9 +95,16 @@ function get_surface_rocket_fuel_productivity(surface, force)
     return average
 end
 
---- Gets the module productivity bonus for a surface, using stored settings or calculating it.
---- @param surface LuaSurface
---- @return number -- the productivity bonus (e.g., 0.2 for 20%)
+--- Retrieves the effective module productivity bonus for a given surface and force.
+---
+--- If user-defined settings exist for the surface, they are used in the following order:
+--- 1. A custom value (if enabled via checkbox) is returned, converted from percent to decimal.
+--- 2. If "use_cached" is selected instead, the value is calculated using entity scanning.
+--- 3. If no valid settings exist, fallback to calculated value.
+---
+--- @param surface LuaSurface           The surface to check productivity on.
+--- @param force LuaForce               The force owning the machines and settings.
+--- @return number                      The productivity bonus as a decimal (e.g., 0.2 for 20%).
 local function get_effective_module_bonus(surface, force)
     if not surface or not surface.valid then return 0 end
     if not force then return 0 end
@@ -112,6 +126,17 @@ local function get_effective_module_bonus(surface, force)
     return get_surface_rocket_fuel_productivity(surface, force)
 end
 
+--- Calculates the number of canisters required for a rocket launch.
+---
+--- Uses rocket fuel productivity (modules + fuel research) to determine attrition,
+--- and rocket part productivity (silo + research) to calculate effective throughput.
+---
+--- Clamps fuel bonus to 75% (max 3.0 out of 4), and part bonus to 200% (max 2.0 additional).
+--- Final canister count is floored from the formula:
+---     base_canisters * (1 - fuel_bonus / 4) / (1 + part_bonus)
+---
+--- @param silo LuaEntity               The launching rocket silo.
+--- @return integer                     The required number of canisters after all bonuses applied.
 local function calculate_canisters(silo)
     if not (silo and silo.valid) then
         return base_canisters
@@ -150,17 +175,18 @@ local function calculate_canisters(silo)
     return canisters
 end
 
---- Finds the base at a given position.
---- @param surface LuaSurface The game surface to search on.
---- @param position MapPosition The exact position to check.
---- @return LuaEntity|nil The platform hub at the position, or nil if none found.
+--- Finds the base (platform hub or landing pad) at a given position.
+--- @param surface LuaSurface # The game surface to search on.
+--- @param position MapPosition # The exact position to check.
+--- @return LuaEntity|nil # The found base entity (either 'space-platform-hub' or 'cargo-landing-pad'), or nil if none found.
 local function find_base_at_position(surface, position)
     local base_name = space_age and "space-platform-hub" or "cargo-landing-pad"
 
     return surface.find_entity(base_name, position)
 end
 
---- Prunes old storage entries by removing expired rocket cargo pods.
+--- Removes rocket cargo pod entries from storage that are older than 3600 ticks.
+--- @return nil
 local function prune_storage()
     local expired = {}
 
@@ -175,8 +201,8 @@ local function prune_storage()
     end
 end
 
---- Store the count of canisters required for the launch
---- @param event EventData
+--- Stores the number of canisters required for a rocket launch, based on the silo and destination.
+--- @param event EventData.on_rocket_launch_ordered # Event data from on_rocket_launch_ordered.
 local function handle_on_rocket_launch_ordered(event)
     local silo = event.rocket_silo
     local rocket = event.rocket
@@ -205,8 +231,8 @@ local function handle_on_rocket_launch_ordered(event)
     end
 end
 
---- Return canisters to the base.
---- @param event EventData
+--- Returns canisters from a delivered cargo pod back to its destination base or spills them if storage is full.
+--- @param event EventData.on_cargo_pod_delivered_cargo # Event data from on_cargo_pod_delivered_cargo.
 local function handle_on_cargo_pod_delivered_cargo(event)
     local cargo_pod = event.cargo_pod
     if not (cargo_pod and cargo_pod.valid and cargo_pod.unit_number) then return end
@@ -269,6 +295,8 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     prune_storage()
 end
 
+--- Handles GUI click events, such as closing the rocket fuel settings frame.
+--- @param event EventData.on_gui_click # Event data for a GUI click event.
 local function handle_on_gui_click(event)
     if event.element.name == "rfs_close_button" then
         local player = game.get_player(event.player_index)
@@ -278,6 +306,9 @@ local function handle_on_gui_click(event)
     end
 end
 
+--- Handles selection state changes in the rocket fuel settings GUI.
+--- Updates surface-specific settings based on user input.
+--- @param event EventData.on_gui_selection_state_changed # Event data for a GUI selection state change.
 local function handle_on_gui_selection_state_changed(event)
     local element = event.element
     if not (element and element.valid) then return end
@@ -320,6 +351,10 @@ local function handle_on_gui_selection_state_changed(event)
     storage.rfs_surface_settings[surface_name] = settings
 end
 
+--- Handles checkbox state changes in the rocket fuel settings GUI.
+--- Updates the surface-specific settings and ensures checkbox exclusivity between custom and cached options.
+--- Rebuilds the GUI to reflect the new settings.
+--- @param event EventData.on_gui_checked_state_changed # Event data from a GUI checkbox state change.
 local function handle_on_gui_checked_state_changed(event)
     local element = event.element
     if not (element and element.valid) then return end
@@ -375,6 +410,9 @@ local function handle_on_gui_checked_state_changed(event)
     build_rocket_fuel_settings_gui(player, selected_surface, preset)
 end
 
+--- Toggles the rocket fuel settings GUI when the push button or shortcut is activated.
+--- Destroys the GUI if it's already open, or builds it for the player's current surface.
+--- @param event EventData.on_gui_click|EventData.on_lua_shortcut The GUI or shortcut activation event.
 local function handle_rfs_push_button_gui(event)
     local player = game.get_player(event.player_index)
     if not player then return end
@@ -387,12 +425,17 @@ local function handle_rfs_push_button_gui(event)
     end
 end
 
+--- Handles the Lua shortcut event for toggling the rocket fuel settings GUI.
+--- @param event EventData.on_lua_shortcut # The shortcut activation event.
 local function handle_on_lua_shortcut(event)
     if event.prototype_name == "rfs-shortcut" then
         handle_rfs_push_button_gui(event)
     end
 end
 
+--- Handles the event when a GUI element is closed manually.
+--- Ensures the rocket fuel settings frame is destroyed if it was closed.
+--- @param event EventData.on_gui_closed # The GUI close event.
 local function handle_on_gui_closed(event)
     if event.element and event.element.name == "rocket_fuel_settings_frame" then
         local player = game.get_player(event.player_index)
@@ -402,6 +445,7 @@ local function handle_on_gui_closed(event)
     end
 end
 
+--- Registers all event handlers used by the mod.
 local function register_events()
     script.on_event(defines.events.on_rocket_launch_ordered, handle_on_rocket_launch_ordered)
     script.on_event(defines.events.on_cargo_pod_delivered_cargo, handle_on_cargo_pod_delivered_cargo)
@@ -412,18 +456,23 @@ local function register_events()
     script.on_event(defines.events.on_gui_closed, handle_on_gui_closed)
 end
 
+--- Initializes mod storage and registers event handlers when the mod is first added to a save.
 script.on_init(function()
     storage.rocket_cargo_pods = {}
     storage.rfs_surface_settings = {}
     register_events()
 end)
 
+--- Handles configuration changes such as mod updates or added/removed mods.
+--- Ensures all storage tables are initialized and event handlers are re-registered.
+--- @param data ConfigurationChangedData
 script.on_configuration_changed(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
     storage.rfs_surface_settings = storage.rfs_surface_settings or {}
     register_events()
 end)
 
+--- Re-registers event handlers after a game load to ensure event handlers are restored.
 script.on_load(function()
     register_events()
 end)
