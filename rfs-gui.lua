@@ -33,7 +33,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         gui_root.rocket_fuel_settings_frame.destroy()
     end
 
-    local frame = gui_root.add {
+    local frame = gui_root.add
+    {
         type = "frame",
         name = "rocket_fuel_settings_frame",
         direction = "vertical",
@@ -41,7 +42,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     frame.auto_center = true
 
     -- Title bar with caption and close button
-    local titlebar = frame.add {
+    local titlebar = frame.add
+    {
         type = "flow",
         direction = "horizontal",
         name = "rfs_titlebar",
@@ -49,7 +51,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     }
 
     -- Caption (left-aligned title)
-    titlebar.add {
+    titlebar.add
+    {
         type = "label",
         caption = { "", "[item=rocket-fuel] [item=productivity-module-3]" },
         style = "frame_title",
@@ -57,7 +60,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     }
 
     -- Spacer to push close button to the right
-    local spacer = titlebar.add {
+    local spacer = titlebar.add
+    {
         type = "empty-widget",
         style = "draggable_space_header"
     }
@@ -66,7 +70,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     spacer.drag_target = frame
 
     -- Close button (right-aligned)
-    titlebar.add {
+    titlebar.add
+    {
         type = "sprite-button",
         name = "rfs_close_button",
         sprite = "utility/close",
@@ -91,7 +96,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     end
 
     -- Surface selector dropdown (direct child of frame)
-    frame.add {
+    frame.add
+    {
         type = "drop-down",
         name = "rfs_surface_selector",
         items = surface_names,
@@ -99,7 +105,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     }
 
     -- Insert frame for checkboxes and inputs
-    local settings_frame = frame.add {
+    local settings_frame = frame.add
+    {
         type = "frame",
         name = "rfs_settings_frame",
         direction = "vertical",
@@ -116,12 +123,14 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     custom_left.style.horizontally_squashable = true
     custom_left.style.vertical_align = "center"
 
-    custom_left.add {
+    custom_left.add
+    {
         type = "checkbox",
         name = "rfs_use_custom",
         state = use_custom
     }
-    custom_left.add {
+    custom_left.add
+    {
         type = "label",
         caption = "Assigned: per building bonus %"
     }
@@ -144,7 +153,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         end
     end
 
-    local custom_value_dropdown = custom_right.add {
+    local custom_value_dropdown = custom_right.add
+    {
         type = "drop-down",
         name = "rfs_custom_value",
         items = custom_value_options,
@@ -164,12 +174,14 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     cached_left.style.horizontally_squashable = true
     cached_left.style.vertical_align = "center"
 
-    cached_left.add {
+    cached_left.add
+    {
         type = "checkbox",
         name = "rfs_use_cached",
         state = use_cached
     }
-    cached_left.add {
+    cached_left.add
+    {
         type = "label",
         caption = "Calculated: cache life in minutes"
     }
@@ -192,7 +204,8 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         end
     end
 
-    local cache_duration_dropdown = cached_right.add {
+    local cache_duration_dropdown = cached_right.add
+    {
         type = "drop-down",
         name = "rfs_cache_duration",
         items = duration_options,
