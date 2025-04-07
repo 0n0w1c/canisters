@@ -20,9 +20,13 @@ local function get_research_bonus(force, technology_name)
 end
 
 --- Calculates or retrieves the cached productivity bonus from assemblers producing rocket fuel on a surface.
+--- Filters by force to ensure only that force's buildings are considered.
 --- @param surface LuaSurface
---- @return number The average productivity bonus on that surface.
-function get_surface_rocket_fuel_productivity(surface)
+--- @param force LuaForce
+--- @return number The average productivity bonus on that surface for the given force.
+function get_surface_rocket_fuel_productivity(surface, force)
+    if not surface then return 0 end
+
     local surface_name = surface.name
     local current_tick = game.tick
 
@@ -42,6 +46,7 @@ function get_surface_rocket_fuel_productivity(surface)
         return cache.average
     end
 
+    -- Determine eligible assembler names based on surface
     local names
     if surface_name == "aquilo" then
         names = { "cryogenic-plant", "chemical-plant", "assembling-machine-2", "assembling-machine-3" }
@@ -51,9 +56,11 @@ function get_surface_rocket_fuel_productivity(surface)
         names = { "assembling-machine-2", "assembling-machine-3" }
     end
 
+    -- Only scan assemblers belonging to the given force
     local assembling_machines = surface.find_entities_filtered {
         type = "assembling-machine",
-        name = names
+        name = names,
+        force = force
     }
 
     local total_bonus = 0
@@ -63,13 +70,7 @@ function get_surface_rocket_fuel_productivity(surface)
         local recipe = assembler.get_recipe()
         if recipe and recipe.valid and recipe.prototype then
             local recipe_prototype = recipe.prototype
-            local produces_rocket_fuel = false
-
             if recipe_prototype.main_product and recipe_prototype.main_product.name == "rocket-fuel" then
-                produces_rocket_fuel = true
-            end
-
-            if produces_rocket_fuel then
                 total_bonus = total_bonus + assembler.productivity_bonus
                 count = count + 1
             end
@@ -89,8 +90,9 @@ end
 --- Gets the module productivity bonus for a surface, using stored settings or calculating it.
 --- @param surface LuaSurface
 --- @return number -- the productivity bonus (e.g., 0.2 for 20%)
-local function get_effective_module_bonus(surface)
+local function get_effective_module_bonus(surface, force)
     if not surface or not surface.valid then return 0 end
+    if not force then return 0 end
 
     local surface_name = surface.name
     local settings = (storage.rfs_surface_settings or {})[surface_name]
@@ -102,11 +104,11 @@ local function get_effective_module_bonus(surface)
                 return value / 100
             end
         elseif settings.use_cached then
-            return get_surface_rocket_fuel_productivity(surface)
+            return get_surface_rocket_fuel_productivity(surface, force)
         end
     end
 
-    return get_surface_rocket_fuel_productivity(surface)
+    return get_surface_rocket_fuel_productivity(surface, force)
 end
 
 local function calculate_canisters(silo)
@@ -116,7 +118,7 @@ local function calculate_canisters(silo)
 
     local force = silo.force
     local surface = silo.surface
-    local module_bonus = get_effective_module_bonus(surface)
+    local module_bonus = get_effective_module_bonus(surface, force)
     local silo_productivity = silo.productivity_bonus or 0
     local part_research_bonus = get_research_bonus(force, "rocket-part-productivity")
     local fuel_research_bonus = get_research_bonus(force, "rocket-fuel-productivity")
@@ -334,7 +336,9 @@ local function handle_on_gui_checked_state_changed(event)
     local selected_surface = surface_selector.items[surface_selector.selected_index]
     if not selected_surface then return end
 
-    local custom_value = math.floor(get_surface_rocket_fuel_productivity(game.surfaces[selected_surface]) * 100 + 0.5)
+    local surface = game.surfaces[selected_surface]
+    local force = player.force
+    local custom_value = math.floor(get_surface_rocket_fuel_productivity(surface, force) * 100 + 0.5)
 
     local cache_dropdown = settings_frame.rfs_cache_duration
     local cache_duration = cache_dropdown and cache_dropdown.items[cache_dropdown.selected_index] or "1"
@@ -378,7 +382,7 @@ local function handle_rfs_push_button_gui(event)
     if frame then
         frame.destroy()
     else
-        build_rocket_fuel_settings_gui(player)
+        build_rocket_fuel_settings_gui(player, player.surface.name)
     end
 end
 

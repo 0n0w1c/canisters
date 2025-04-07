@@ -19,10 +19,10 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     local use_cached = preset.use_cached or saved.use_cached or (not use_custom)
     local selected_surface = game.surfaces[selected_surface_name]
     local custom_value = tonumber(preset.custom_value or saved.custom_value)
-        or math.floor(get_surface_rocket_fuel_productivity(selected_surface) * 100 + 0.5)
+        or math.floor(get_surface_rocket_fuel_productivity(selected_surface, player.force) * 100 + 0.5)
 
     if use_cached then
-        custom_value = math.floor(get_surface_rocket_fuel_productivity(selected_surface) * 100 + 0.5)
+        custom_value = math.floor(get_surface_rocket_fuel_productivity(selected_surface, player.force) * 100 + 0.5)
     end
 
     local cache_duration = preset.cache_duration or saved.cache_duration or "1"
