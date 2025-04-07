@@ -49,17 +49,15 @@ function get_surface_rocket_fuel_productivity(surface, force)
         return cache.average
     end
 
-    -- Determine eligible assembler names based on surface
-    local names
-    if surface_name == "aquilo" then
-        names = { "cryogenic-plant", "chemical-plant", "assembling-machine-2", "assembling-machine-3" }
-    elseif surface_name == "gleba" then
-        names = { "biochamber", "assembling-machine-2", "assembling-machine-3" }
-    else
-        names = { "assembling-machine-2", "assembling-machine-3" }
-    end
+    local names =
+    {
+        "cryogenic-plant",
+        "chemical-plant",
+        "assembling-machine-2",
+        "assembling-machine-3",
+        "biochamber"
+    }
 
-    -- Only scan assemblers belonging to the given force
     local assembling_machines = surface.find_entities_filtered {
         type = "assembling-machine",
         name = names,
