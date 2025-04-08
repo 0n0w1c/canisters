@@ -131,7 +131,7 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     custom_right.style.vertical_align = "center"
 
     local custom_value_options = {}
-    for i = 0, 190 do
+    for i = 0, 90 do
         table.insert(custom_value_options, tostring(i))
     end
 

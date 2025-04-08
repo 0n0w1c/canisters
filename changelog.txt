@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 08.04.2025
+  Bugfixes:
+    - Refactored the Returned canister calculation
+    - Muluna: Increase rocket fuel for a launch to 100 (2x recipe) in calculation, except on Muluna
+  Changes:
+    - Changed shortcut icon to be rocket fuel + productivity modules 3
+---------------------------------------------------------------------------------------------------
 Version: 0.2.5
 Date: 07.04.2025
   Bugfixes:

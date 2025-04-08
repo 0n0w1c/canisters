@@ -1,8 +1,7 @@
-local rfs_gui = require("rfs-gui")
+require("rfs-gui")
 
--- Load settings from startup configuration
+local rocket_fuel_productivity_cache = {}
 local space_age = script.active_mods["space-age"]
-local base_canisters = (space_age and 50) or 1000
 
 local machine_types
 if space_age then
@@ -22,9 +21,6 @@ else
         "assembling-machine-3"
     }
 end
-
--- Stores per-surface productivity averages and last update tick
-local rocket_fuel_productivity_cache = {}
 
 --- Calculates the productivity bonus from a research technology.
 --- This is based on the technology's level (each level adds 10%).
@@ -164,52 +160,55 @@ local function get_effective_module_bonus(surface, force)
     return get_surface_rocket_fuel_productivity(surface, force)
 end
 
---- Calculates the number of canisters required for a rocket launch.
+--- Calculates the number of canisters required to fuel a rocket launch from a given silo.
 ---
---- Uses rocket fuel productivity (modules + fuel research) to determine attrition,
---- and rocket part productivity (silo + research) to calculate effective throughput.
+--- The calculation accounts for:
+--- - Base canister cost (affected by mods like Space Age or planet-muluna)
+--- - Rocket fuel productivity from modules and research
+--- - Rocket part productivity from silo productivity and research
 ---
---- Clamps fuel bonus to 75% (max 3.0 out of 4), and part bonus to 200% (max 2.0 additional).
---- Final canister count is floored from the formula:
----     base_canisters * (1 - fuel_bonus / 4) / (1 + part_bonus)
+--- Fuel and part productivity bonuses are capped at +300% by default (can be adjusted or removed).
+--- The result is floored to avoid overestimation, ensuring canister usage does not exceed actual needs.
 ---
---- @param silo LuaEntity               The launching rocket silo.
---- @return integer                     The required number of canisters after all bonuses applied.
+--- @param silo LuaEntity # The rocket silo entity performing the launch.
+--- @return integer # The number of canisters required after applying productivity bonuses.
 local function calculate_canisters(silo)
-    if not (silo and silo.valid) then
-        return base_canisters
-    end
+    if not (silo and silo.valid) then return 0 end
 
+    local base_canisters = (space_age and 50) or 1000
     local force = silo.force
     local surface = silo.surface
+
+    local effective_base = base_canisters
+
+    if script.active_mods["planet-muluna"] and surface.name ~= "muluna" then
+        effective_base = 100
+    end
+
     local module_bonus = get_effective_module_bonus(surface, force)
     local silo_productivity = silo.productivity_bonus or 0
     local fuel_research_bonus = get_research_bonus(force, "rocket-fuel-productivity")
-    local part_research_bonus = get_research_bonus(force, "rocket-part-productivity")
-    if script.active_mods["planet-muluna"] then
-        part_research_bonus = get_muluna_rocket_part_bonus(force)
-    end
+    local part_research_bonus = script.active_mods["planet-muluna"]
+        and get_muluna_rocket_part_bonus(force)
+        or get_research_bonus(force, "rocket-part-productivity")
 
-    local total_fuel_bonus = fuel_research_bonus + module_bonus
-    if total_fuel_bonus > 4 then total_fuel_bonus = 4 end
+    local fuel_bonus = math.min(fuel_research_bonus + module_bonus, 3)
+    local part_bonus = math.min(silo_productivity + part_research_bonus, 3)
 
-    local attrition_rate = 1 - total_fuel_bonus / 4
+    local fuel_efficiency = 1 + fuel_bonus
+    local part_efficiency = 1 + part_bonus
 
-    local total_part_bonus = silo_productivity + part_research_bonus
-    if total_part_bonus > 4 then total_part_bonus = 4 end
-
-    local canisters = math.floor(base_canisters * attrition_rate / (1 + total_part_bonus))
+    local canisters = math.floor(effective_base / (fuel_efficiency * part_efficiency))
 
     --[[
     game.print("--- Canister Calculation Debug ---")
-    game.print("Base canisters: " .. base_canisters)
+    game.print("Effective base canisters: " .. effective_base)
     game.print("Module bonus: " .. string.format("%.3f", module_bonus))
     game.print("Fuel research bonus: " .. string.format("%.3f", fuel_research_bonus))
-    game.print("Total rocket fuel bonus (capped 4): " .. string.format("%.3f", total_fuel_bonus))
+    game.print("Total fuel bonus (capped): " .. string.format("%.3f", fuel_bonus))
     game.print("Silo productivity: " .. string.format("%.3f", silo_productivity))
     game.print("Part research bonus: " .. string.format("%.3f", part_research_bonus))
-    game.print("Total rocket part bonus (capped 4): " .. string.format("%.3f", total_part_bonus))
-    game.print("Attrition rate: " .. string.format("%.3f", attrition_rate))
+    game.print("Total part bonus (capped): " .. string.format("%.3f", part_bonus))
     game.print("Final canisters: " .. canisters)
     ]]
 

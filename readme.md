@@ -1,7 +1,5 @@
 #### Canisters
-Introduces reusable canisters for rocket launches  
-
-*Version 0.2.0 is a major upgrade, significant breaking changes.*  
+Introduces reusable canisters for rocket launches.  
 
 Adds a logistic challenge and extended integration of modded materials.  
 Canisters are added as an additional ingredient for rocket fuel.  
@@ -17,7 +15,7 @@ Startup Option:
 Select the metal for the recipe (default: Steel)  
 
 Canister recipe:  
-1 steel plate (or 2 tin plate or 1 titanium plate)  
+1 steel plate (or 5 tin plate or 1 titanium plate)  
 Additionally, if glass is available, the recipe will include 1 glass (plate)  
 
 *Supported mods:*  
@@ -27,3 +25,4 @@ Additionally, if glass is available, the recipe will include 1 glass (plate)
 [AAI Industry](https://mods.factorio.com/mod/aai-industry)  
 [Plutonium Energy](https://mods.factorio.com/mod/PlutoniumEnergy)  
 [Crushing Industry](https://mods.factorio.com/mod/crushing-industry)
+[Muluna, Moon of Nauvis](https://mods.factorio.com/mod/planet-muluna)
