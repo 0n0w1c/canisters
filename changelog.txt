@@ -1,8 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.5
+Date: 07.04.2025
+  Bugfixes:
+    - Muluna: Added mod specific rocket part productivity bonus calculations
+  Changes:
+    - None
+---------------------------------------------------------------------------------------------------
 Version: 0.2.4
 Date: 07.04.2025
   Bugfixes:
-    - Add force name to the cache key (multi-player)
+    - Added force name to the cache key (multi-player)
     - Updated LuaDoc annotations
   Changes:
     - None

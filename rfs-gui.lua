@@ -6,12 +6,10 @@ local EXCLUDED_SURFACES =
 function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     preset = preset or {}
 
-    -- Fallback to the first surface if not provided
     if not selected_surface_name or not game.surfaces[selected_surface_name] then
         selected_surface_name = player.surface.name
     end
 
-    -- Load saved settings for this surface from storage if available
     storage.rfs_surface_settings = storage.rfs_surface_settings or {}
     local saved = selected_surface_name and storage.rfs_surface_settings[selected_surface_name] or {}
 
@@ -34,23 +32,21 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     end
 
     local frame = gui_root.add
-    {
-        type = "frame",
-        name = "rocket_fuel_settings_frame",
-        direction = "vertical",
-    }
+        {
+            type = "frame",
+            name = "rocket_fuel_settings_frame",
+            direction = "vertical",
+        }
     frame.auto_center = true
 
-    -- Title bar with caption and close button
     local titlebar = frame.add
-    {
-        type = "flow",
-        direction = "horizontal",
-        name = "rfs_titlebar",
-        drag_target = frame,
-    }
+        {
+            type = "flow",
+            direction = "horizontal",
+            name = "rfs_titlebar",
+            drag_target = frame,
+        }
 
-    -- Caption (left-aligned title)
     titlebar.add
     {
         type = "label",
@@ -59,17 +55,15 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         ignored_by_interaction = true
     }
 
-    -- Spacer to push close button to the right
     local spacer = titlebar.add
-    {
-        type = "empty-widget",
-        style = "draggable_space_header"
-    }
+        {
+            type = "empty-widget",
+            style = "draggable_space_header"
+        }
     spacer.style.horizontally_stretchable = true
     spacer.style.height = 24
     spacer.drag_target = frame
 
-    -- Close button (right-aligned)
     titlebar.add
     {
         type = "sprite-button",
@@ -79,7 +73,6 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         mouse_button_filter = { "left" }
     }
 
-    -- Surface selector dropdown
     local surface_names = {}
     for _, surface in pairs(game.surfaces) do
         if surface.planet and not EXCLUDED_SURFACES[surface.name] then
@@ -95,7 +88,6 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         end
     end
 
-    -- Surface selector dropdown (direct child of frame)
     frame.add
     {
         type = "drop-down",
@@ -104,16 +96,14 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
         selected_index = selected_index
     }
 
-    -- Insert frame for checkboxes and inputs
     local settings_frame = frame.add
-    {
-        type = "frame",
-        name = "rfs_settings_frame",
-        direction = "vertical",
-        style = "inside_shallow_frame_with_padding"
-    }
+        {
+            type = "frame",
+            name = "rfs_settings_frame",
+            direction = "vertical",
+            style = "inside_shallow_frame_with_padding"
+        }
 
-    -- Custom value section
     local custom_row = settings_frame.add { type = "flow", direction = "horizontal" }
     custom_row.style.horizontally_stretchable = true
     custom_row.style.vertical_align = "center"
@@ -141,7 +131,7 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     custom_right.style.vertical_align = "center"
 
     local custom_value_options = {}
-    for i = 0, 90 do
+    for i = 0, 190 do
         table.insert(custom_value_options, tostring(i))
     end
 
@@ -154,17 +144,16 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     end
 
     local custom_value_dropdown = custom_right.add
-    {
-        type = "drop-down",
-        name = "rfs_custom_value",
-        items = custom_value_options,
-        selected_index = selected_custom_index,
-        tooltip = { "tooltip.rfs_custom_value" }
-    }
+        {
+            type = "drop-down",
+            name = "rfs_custom_value",
+            items = custom_value_options,
+            selected_index = selected_custom_index,
+            tooltip = { "tooltip.rfs_custom_value" }
+        }
     custom_value_dropdown.style.width = 80
     custom_value_dropdown.style.horizontal_align = "right"
 
-    -- Cached value section
     local cached_row = settings_frame.add { type = "flow", direction = "horizontal" }
     cached_row.style.horizontally_stretchable = true
     cached_row.style.vertical_align = "center"
@@ -205,13 +194,13 @@ function build_rocket_fuel_settings_gui(player, selected_surface_name, preset)
     end
 
     local cache_duration_dropdown = cached_right.add
-    {
-        type = "drop-down",
-        name = "rfs_cache_duration",
-        items = duration_options,
-        selected_index = selected_tick_index,
-        tooltip = { "tooltip.rfs_cache_duration" }
-    }
+        {
+            type = "drop-down",
+            name = "rfs_cache_duration",
+            items = duration_options,
+            selected_index = selected_tick_index,
+            tooltip = { "tooltip.rfs_cache_duration" }
+        }
     cache_duration_dropdown.style.width = 80
     cache_duration_dropdown.style.horizontal_align = "right"
 

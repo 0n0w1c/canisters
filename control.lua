@@ -4,6 +4,25 @@ local rfs_gui = require("rfs-gui")
 local space_age = script.active_mods["space-age"]
 local base_canisters = (space_age and 50) or 1000
 
+local machine_types
+if space_age then
+    machine_types =
+    {
+        "chemical-plant",
+        "assembling-machine-2",
+        "assembling-machine-3",
+        "cryogenic-plant",
+        "biochamber"
+    }
+else
+    machine_types =
+    {
+        "chemical-plant",
+        "assembling-machine-2",
+        "assembling-machine-3"
+    }
+end
+
 -- Stores per-surface productivity averages and last update tick
 local rocket_fuel_productivity_cache = {}
 
@@ -15,10 +34,35 @@ local rocket_fuel_productivity_cache = {}
 --- @return number                      The productivity bonus as a decimal (e.g., 0.3 for 30%).
 local function get_research_bonus(force, technology_name)
     local tech = force.technologies[technology_name]
-    if tech and tech.valid then
+    if tech and tech.valid and tech.level then
         return (tech.level - 1) * 0.1
     end
+
     return 0
+end
+
+--- Calculates the total rocket part productivity bonus for a force, specific to the Muluna tech progression.
+---
+--- This function sums:
+--- 1. All researched finite technologies matching "rocket-part-productivity", adding +10% per tech.
+--- 2. The infinite bonus from "rocket-part-productivity-aquilo", weighted as 2× its normal value.
+---
+--- @param force LuaForce The force whose technologies should be scanned for rocket part productivity bonuses.
+--- @return number The total rocket part productivity bonus (e.g., 0.5 = +50%).
+local function get_muluna_rocket_part_bonus(force)
+    local total_bonus = 0
+    local level_bonus = 0.1
+
+    for name, tech in pairs(force.technologies) do
+        if tech.valid and tech.researched and string.find(name, "rocket%-part%-productivity") then
+            total_bonus = total_bonus + level_bonus
+        end
+    end
+
+    local infinite_bonus = get_research_bonus(force, "rocket-part-productivity-aquilo")
+    total_bonus = total_bonus + (2 * infinite_bonus)
+
+    return total_bonus
 end
 
 --- Calculates or retrieves the cached productivity bonus from assembling machines
@@ -61,13 +105,7 @@ function get_surface_rocket_fuel_productivity(surface, force)
 
     local assembling_machines = surface.find_entities_filtered {
         type = "assembling-machine",
-        name = {
-            "cryogenic-plant",
-            "chemical-plant",
-            "assembling-machine-2",
-            "assembling-machine-3",
-            "biochamber"
-        },
+        name = machine_types,
         force = force
     }
 
@@ -146,16 +184,19 @@ local function calculate_canisters(silo)
     local surface = silo.surface
     local module_bonus = get_effective_module_bonus(surface, force)
     local silo_productivity = silo.productivity_bonus or 0
-    local part_research_bonus = get_research_bonus(force, "rocket-part-productivity")
     local fuel_research_bonus = get_research_bonus(force, "rocket-fuel-productivity")
+    local part_research_bonus = get_research_bonus(force, "rocket-part-productivity")
+    if script.active_mods["planet-muluna"] then
+        part_research_bonus = get_muluna_rocket_part_bonus(force)
+    end
 
     local total_fuel_bonus = fuel_research_bonus + module_bonus
-    if total_fuel_bonus > 3 then total_fuel_bonus = 3 end
+    if total_fuel_bonus > 4 then total_fuel_bonus = 4 end
 
     local attrition_rate = 1 - total_fuel_bonus / 4
 
     local total_part_bonus = silo_productivity + part_research_bonus
-    if total_part_bonus > 3 then total_part_bonus = 3 end
+    if total_part_bonus > 4 then total_part_bonus = 4 end
 
     local canisters = math.floor(base_canisters * attrition_rate / (1 + total_part_bonus))
 
@@ -164,10 +205,10 @@ local function calculate_canisters(silo)
     game.print("Base canisters: " .. base_canisters)
     game.print("Module bonus: " .. string.format("%.3f", module_bonus))
     game.print("Fuel research bonus: " .. string.format("%.3f", fuel_research_bonus))
-    game.print("Total rocket fuel bonus (capped): " .. string.format("%.3f", total_fuel_bonus))
+    game.print("Total rocket fuel bonus (capped 4): " .. string.format("%.3f", total_fuel_bonus))
     game.print("Silo productivity: " .. string.format("%.3f", silo_productivity))
     game.print("Part research bonus: " .. string.format("%.3f", part_research_bonus))
-    game.print("Total rocket part bonus (capped): " .. string.format("%.3f", total_part_bonus))
+    game.print("Total rocket part bonus (capped 4): " .. string.format("%.3f", total_part_bonus))
     game.print("Attrition rate: " .. string.format("%.3f", attrition_rate))
     game.print("Final canisters: " .. canisters)
     ]]
