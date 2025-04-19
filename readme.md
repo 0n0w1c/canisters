@@ -11,8 +11,9 @@ Shortcut to access the per planet rocket fuel productivity settings.
 * For best performance, change from Calculated to Assigned (using the calculated value).  
 * Assigned requires updating when changing productivity modules for rocket fuel production.  
 
-Startup Option:  
+Startup Options:  
 Select the metal for the recipe (default: Steel)  
+Enable disposable canisters (no canisters will be returned)
 
 Canister recipe:  
 1 steel plate (or 5 tin plate or 1 titanium plate)  

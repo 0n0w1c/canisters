@@ -1,3 +1,5 @@
+if DISPOSABLE then return end
+
 require("rfs-gui")
 
 local rocket_fuel_productivity_cache = {}

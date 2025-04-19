@@ -14,6 +14,15 @@ recipe.results = { { type = "item", name = name, amount = 1 } }
 
 data.extend({ item, recipe })
 
+local technology = data.raw["technology"]["rocket-fuel"]
+if technology then
+    table.insert(technology.effects, { type = "unlock-recipe", recipe = "canister" })
+else
+    data.raw["recipe"]["canister"].enabled = true
+end
+
+if DISPOSABLE then return end
+
 local used_name = name .. "-black"
 item = table.deepcopy(data.raw["item"]["barrel"])
 item.name = used_name
@@ -44,11 +53,9 @@ refurbishing_recipe.ingredients =
 
 data.extend({ item, refurbishing_recipe })
 
-local technology = data.raw["technology"]["rocket-fuel"]
+technology = data.raw["technology"]["rocket-fuel"]
 if technology then
-    table.insert(technology.effects, { type = "unlock-recipe", recipe = "canister" })
     table.insert(technology.effects, { type = "unlock-recipe", recipe = "canister-refurbishing" })
 else
-    data.raw["recipe"]["canister"].enabled = true
     data.raw["recipe"]["canister-refurbishing"].enabled = true
 end

@@ -12,4 +12,11 @@ data:extend
         allowed_values = metals,
         order = "a"
     },
+    {
+        type = "bool-setting",
+        name = "canisters-disposable",
+        setting_type = "startup",
+        default_value = false,
+        order = "b"
+    }
 })
