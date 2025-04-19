@@ -13,7 +13,7 @@ Shortcut to access the per planet rocket fuel productivity settings.
 
 Startup Options:  
 Select the metal for the recipe (default: Steel)  
-Enable disposable canisters (no canisters will be returned)  
+Enable disposable canisters (no canisters will be returned, disables runtime code)  
 
 Canister recipe:  
 1 steel plate (or 5 tin plate or 1 titanium plate)  
