@@ -178,7 +178,7 @@ local function calculate_canisters(silo)
     if not (silo and silo.valid) then return 0 end
 
     local base_canisters = (space_age and 50) or 1000
-    local force = silo.force
+    local force = silo.force ---@cast force LuaForce
     local surface = silo.surface
 
     local effective_base = base_canisters
@@ -262,7 +262,7 @@ local function handle_on_rocket_launch_ordered(event)
 
         local unit_number = cargo_pod.unit_number
         local count = calculate_canisters(silo)
-        if count > 1 then
+        if unit_number and count > 1 then
             storage.rocket_cargo_pods[unit_number] =
             {
                 canisters = count,
@@ -280,6 +280,7 @@ local function handle_on_cargo_pod_delivered_cargo(event)
     if not (cargo_pod and cargo_pod.valid and cargo_pod.unit_number) then return end
 
     local unit_number = cargo_pod.unit_number
+    if not unit_number then return end
 
     local pod_data = storage.rocket_cargo_pods[unit_number]
     if not pod_data then return end
@@ -415,7 +416,7 @@ local function handle_on_gui_checked_state_changed(event)
     if not selected_surface then return end
 
     local surface = game.surfaces[selected_surface]
-    local force = player.force
+    local force = player.force ---@cast force LuaForce
     local custom_value = math.floor(get_surface_rocket_fuel_productivity(surface, force) * 100 + 0.5)
 
     local cache_dropdown = settings_frame.rfs_cache_duration
@@ -507,7 +508,6 @@ end)
 
 --- Handles configuration changes such as mod updates or added/removed mods.
 --- Ensures all storage tables are initialized and event handlers are re-registered.
---- @param data ConfigurationChangedData
 script.on_configuration_changed(function()
     storage.rocket_cargo_pods = storage.rocket_cargo_pods or {}
     storage.rfs_surface_settings = storage.rfs_surface_settings or {}
