@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 24.04.2025
+  Bugfixes:
+    - None
+  Changes:
+    - Add support for Bob's Ores and Bob's Metals, Chemicals and Intermediates
+      Tin, Titanium and Glass
+---------------------------------------------------------------------------------------------------
 Version: 0.3.2
 Date: 23.04.2025
   Bugfixes:

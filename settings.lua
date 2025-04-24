@@ -1,6 +1,6 @@
 local metals = { "Steel" }
-if mods["bztin"] then table.insert(metals, "Tin") end
-if mods["bztitanium"] then table.insert(metals, "Titanium") end
+if mods["bobores"] or mods["bztin"] then table.insert(metals, "Tin") end
+if mods["bobores"] or mods["bztitanium"] then table.insert(metals, "Titanium") end
 
 data:extend
 ({
