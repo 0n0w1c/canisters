@@ -1,5 +1,6 @@
 local recipe = data.raw["recipe"]["canister"]
 local metal = string.lower(tostring(settings.startup["canisters-canister-metal"].value))
+local disposable = settings.startup["canisters-disposable"].value == true
 
 local recycling = {}
 if mods["quality"] then recycling = require("__quality__/prototypes/recycling") end
@@ -27,3 +28,30 @@ elseif data.raw["item"]["bob-glass"] then
 end
 
 if mods["quality"] then recycling.generate_recycling_recipe(recipe) end
+
+if not disposable then
+    data.raw["item"]["rocket-fuel"].burnt_result = "canister"
+    data.raw["item"]["nuclear-fuel"].burnt_result = "canister"
+    if data.raw["item"]["plutonium-fuel"] then data.raw["item"]["plutonium-fuel"].burnt_result = "canister" end
+
+    for _, prototype_group in pairs(data.raw) do
+        for _, prototype in pairs(prototype_group) do
+            local energy_source = prototype and prototype.energy_source
+            if energy_source and energy_source.type == "burner" then
+                local uses_chemical = false
+                if energy_source.fuel_categories then
+                    for _, category in pairs(energy_source.fuel_categories) do
+                        if category == "chemical" then
+                            uses_chemical = true
+                            break
+                        end
+                    end
+                end
+
+                if uses_chemical and energy_source.fuel_inventory_size and energy_source.fuel_inventory_size > 0 then
+                    energy_source.burnt_inventory_size = energy_source.fuel_inventory_size
+                end
+            end
+        end
+    end
+end

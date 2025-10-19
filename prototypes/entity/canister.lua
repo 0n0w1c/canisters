@@ -2,6 +2,8 @@ local name = "canister"
 local item = table.deepcopy(data.raw["item"]["barrel"])
 local recipe = table.deepcopy(data.raw["recipe"]["barrel"])
 
+local minimum_result = tonumber(settings.startup["canisters-minimum-result"].value)
+
 item.name = name
 item.icon = "__canisters__/graphics/icon/" .. name .. ".png"
 item.stack_size = 100
@@ -43,12 +45,17 @@ refurbishing_recipe.allow_productivity = false
 refurbishing_recipe.allow_quality = false
 refurbishing_recipe.enabled = false
 refurbishing_recipe.energy_required = 5
-refurbishing_recipe.results = { { type = "item", name = name, amount = 10 } }
+
 refurbishing_recipe.ingredients =
 {
     { type = "item",  name = used_name,     amount = 10 },
     { type = "item",  name = "repair-pack", amount = 1 },
     { type = "fluid", name = "steam",       amount = 100 },
+}
+
+refurbishing_recipe.results =
+{
+    { type = "item", name = name, amount_min = minimum_result, amount_max = 10 }
 }
 
 data.extend({ item, refurbishing_recipe })

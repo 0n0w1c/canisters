@@ -1,10 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 19.10.2025
+  Bugfixes:
+    - None
+  Changes:
+    - Added start setting for the refurbishing recipe results minimum number of canisters
+    - Re-introduced burnt_results, burner energy source entities modfied to have burnt output
+---------------------------------------------------------------------------------------------------
 Version: 0.3.3
 Date: 24.04.2025
   Bugfixes:
     - None
   Changes:
-    - Add support for Bob's Ores and Bob's Metals, Chemicals and Intermediates
+    - Added support for Bob's Ores and Bob's Metals, Chemicals and Intermediates
       Tin, Titanium and Glass
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.2

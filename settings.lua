@@ -18,5 +18,15 @@ data:extend
         setting_type = "startup",
         default_value = false,
         order = "b"
+    },
+    {
+        type = "int-setting",
+        name = "canisters-minimum-result",
+        setting_type = "startup",
+        default_value = 5,
+        minimum_value = 0,
+        maximum_value = 10,
+        allowed_values = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+        order = "c"
     }
 })
