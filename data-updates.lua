@@ -30,9 +30,9 @@ end
 if mods["quality"] then recycling.generate_recycling_recipe(recipe) end
 
 if not disposable then
-    data.raw["item"]["rocket-fuel"].burnt_result = "canister"
-    data.raw["item"]["nuclear-fuel"].burnt_result = "canister"
-    if data.raw["item"]["plutonium-fuel"] then data.raw["item"]["plutonium-fuel"].burnt_result = "canister" end
+    data.raw["item"]["rocket-fuel"].burnt_result = "canister-black"
+    data.raw["item"]["nuclear-fuel"].burnt_result = "canister-black"
+    if data.raw["item"]["plutonium-fuel"] then data.raw["item"]["plutonium-fuel"].burnt_result = "canister-black" end
 
     for _, prototype_group in pairs(data.raw) do
         for _, prototype in pairs(prototype_group) do

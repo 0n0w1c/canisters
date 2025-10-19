@@ -1,11 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.1
+Date: 19.10.2025
+  Bugfixes:
+    - Corrected the burnt_result for the canister fuels
+  Changes:
+    - None
+---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 19.10.2025
   Bugfixes:
     - None
   Changes:
     - Added start setting for the refurbishing recipe results minimum number of canisters
-    - Re-introduced burnt_results, burner energy source entities modfied to have burnt output
+    - Re-introduced burnt_result, burner energy source entities modfied to have burnt output
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.3
 Date: 24.04.2025
